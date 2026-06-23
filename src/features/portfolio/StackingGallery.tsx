@@ -101,7 +101,6 @@ export default function StackingGallery({ project, onClose }: StackingGalleryPro
       // Apply horizontal slide translation with GPU hardware acceleration
       const trackOffset = -(scrollPosRef.current * movementSpeed);
       track.style.transform = `translateX(${trackOffset}px) translateZ(0)`;
-      track.style.willChange = 'transform';
 
       allCards.forEach((card) => {
         const rect = card.getBoundingClientRect();
@@ -119,7 +118,6 @@ export default function StackingGallery({ project, onClose }: StackingGalleryPro
 
         // Apply scale & side compression translations with GPU hardware acceleration
         const compression = (centerPoint - cardCenter) * 0.08;
-        card.style.willChange = 'transform';
         if (isFocused) {
           card.style.transform = `scale(1.12) translateX(${compression}px) translateZ(0)`;
         } else {

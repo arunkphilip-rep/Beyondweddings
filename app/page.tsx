@@ -86,10 +86,10 @@ export default function Home() {
       setIsRevealed(true);
     }, 2250);
 
-    // 2. Hero Slideshow rotation loop (6s interval)
+    // 2. Hero Slideshow rotation loop (2.5s interval)
     const slideshowTimer = setInterval(() => {
       setHeroSlide((prev) => (prev + 1) % heroImages.length);
-    }, 6000);
+    }, 2500);
 
     // 3. Testimonials auto-advance loop (5s interval)
     const testimonialsTimer = setInterval(() => {

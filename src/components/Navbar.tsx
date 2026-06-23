@@ -59,10 +59,6 @@ export default function Navbar() {
 
           {/* Push the menu toggle to the right */}
           <div className="flex items-center gap-4 md:gap-8 ml-auto">
-            <div className="header-lang">
-              <span className="lang-link active cursor-default">EN</span>
-            </div>
-
             <button 
               className="menu-toggle" 
               id="menuToggle" 
