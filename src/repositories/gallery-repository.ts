@@ -21,74 +21,93 @@ function getLocalGalleries(): Gallery[] {
   if (typeof window === 'undefined') return [];
   try {
     const stored = localStorage.getItem(GALLERIES_KEY);
-    if (stored) return JSON.parse(stored);
-  } catch { /* ignore */ }
+    let galleries: Gallery[] = [];
+    if (stored) {
+      galleries = JSON.parse(stored);
+    }
 
-  // Seed with 6 portfolio projects on first access
-  const seed: Gallery[] = [
-    {
-      id: 'portfolio-1',
-      created_at: '2026-06-01T10:00:00Z',
-      gallery_name: 'Mariam & Karen',
-      slug: 'mariam-karen',
-      cover_image: '/images/1/a.jpg',
-      event_date: '2026-06-01',
-      venue: 'Rome, Italy',
-      user_id: 'admin',
-    },
-    {
-      id: 'portfolio-2',
-      created_at: '2026-05-15T10:00:00Z',
-      gallery_name: 'Xhenisha & Erald',
-      slug: 'xhenisha-erald',
-      cover_image: '/images/2/a.jpg',
-      event_date: '2026-05-15',
-      venue: 'Tirana, Albania',
-      user_id: 'admin',
-    },
-    {
-      id: 'portfolio-3',
-      created_at: '2026-04-20T10:00:00Z',
-      gallery_name: 'Nazeli & Raffi',
-      slug: 'nazeli-raffi',
-      cover_image: '/images/3/a.jpg',
-      event_date: '2026-04-20',
-      venue: 'Yerevan, Armenia',
-      user_id: 'admin',
-    },
-    {
-      id: 'portfolio-4',
-      created_at: '2026-03-10T10:00:00Z',
-      gallery_name: 'Elena & Andrea',
-      slug: 'elena-andrea',
-      cover_image: '/images/4/a.JPEG',
-      event_date: '2026-03-10',
-      venue: 'Lake Como, Italy',
-      user_id: 'admin',
-    },
-    {
-      id: 'portfolio-5',
-      created_at: '2026-02-18T10:00:00Z',
-      gallery_name: 'Elena & Andrea — Editorial',
-      slug: 'elena-andrea-editorial',
-      cover_image: '/images/5/a.jpg',
-      event_date: '2026-02-18',
-      venue: 'Milan, Italy',
-      user_id: 'admin',
-    },
-    {
-      id: 'portfolio-6',
-      created_at: '2026-01-25T10:00:00Z',
-      gallery_name: 'Xhenisha & Erald — Fine Art',
-      slug: 'xhenisha-erald-fine-art',
-      cover_image: '/images/6/aa.jpg',
-      event_date: '2026-01-25',
-      venue: 'Paris, France',
-      user_id: 'admin',
-    },
-  ];
-  localStorage.setItem(GALLERIES_KEY, JSON.stringify(seed));
-  return seed;
+    // Default 6 portfolio projects that should always be present in local storage
+    const defaults: Gallery[] = [
+      {
+        id: 'portfolio-1',
+        created_at: '2026-06-01T10:00:00Z',
+        gallery_name: 'Mariam & Karen',
+        slug: 'mariam-karen',
+        cover_image: '/images/1/a.jpg',
+        event_date: '2026-06-01',
+        venue: 'Rome, Italy',
+        user_id: 'admin',
+      },
+      {
+        id: 'portfolio-2',
+        created_at: '2026-05-15T10:00:00Z',
+        gallery_name: 'Xhenisha & Erald',
+        slug: 'xhenisha-erald',
+        cover_image: '/images/2/a.jpg',
+        event_date: '2026-05-15',
+        venue: 'Tirana, Albania',
+        user_id: 'admin',
+      },
+      {
+        id: 'portfolio-3',
+        created_at: '2026-04-20T10:00:00Z',
+        gallery_name: 'Nazeli & Raffi',
+        slug: 'nazeli-raffi',
+        cover_image: '/images/3/a.jpg',
+        event_date: '2026-04-20',
+        venue: 'Yerevan, Armenia',
+        user_id: 'admin',
+      },
+      {
+        id: 'portfolio-4',
+        created_at: '2026-03-10T10:00:00Z',
+        gallery_name: 'Elena & Andrea',
+        slug: 'elena-andrea',
+        cover_image: '/images/4/a.JPEG',
+        event_date: '2026-03-10',
+        venue: 'Lake Como, Italy',
+        user_id: 'admin',
+      },
+      {
+        id: 'portfolio-5',
+        created_at: '2026-02-18T10:00:00Z',
+        gallery_name: 'Elena & Andrea — Editorial',
+        slug: 'elena-andrea-editorial',
+        cover_image: '/images/5/a.jpg',
+        event_date: '2026-02-18',
+        venue: 'Milan, Italy',
+        user_id: 'admin',
+      },
+      {
+        id: 'portfolio-6',
+        created_at: '2026-01-25T10:00:00Z',
+        gallery_name: 'Xhenisha & Erald — Fine Art',
+        slug: 'xhenisha-erald-fine-art',
+        cover_image: '/images/6/aa.jpg',
+        event_date: '2026-01-25',
+        venue: 'Paris, France',
+        user_id: 'admin',
+      },
+    ];
+
+    let updated = false;
+    defaults.forEach((def) => {
+      const exists = galleries.some((g) => g.id === def.id || g.slug === def.slug);
+      if (!exists) {
+        galleries.push(def);
+        updated = true;
+      }
+    });
+
+    if (updated || !stored) {
+      // Sort newest created at first
+      galleries.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+      localStorage.setItem(GALLERIES_KEY, JSON.stringify(galleries));
+    }
+    return galleries;
+  } catch {
+    return [];
+  }
 }
 
 function saveLocalGalleries(galleries: Gallery[]): void {
@@ -100,68 +119,64 @@ function getLocalImages(): GalleryImage[] {
   if (typeof window === 'undefined') return [];
   try {
     const stored = localStorage.getItem(IMAGES_KEY);
-    if (stored) return JSON.parse(stored);
-  } catch { /* ignore */ }
+    let images: GalleryImage[] = [];
+    if (stored) {
+      images = JSON.parse(stored);
+    }
 
-  const seed: GalleryImage[] = [];
+    const defaultProjImages: Record<string, string[]> = {
+      'portfolio-1': [
+        '/images/1/a.jpg', '/images/1/aa.jpg', '/images/1/b.jpg', '/images/1/c.jpg', '/images/1/d.jpg', '/images/1/e.jpg',
+        '/images/1/f.jpg', '/images/1/h.jpg', '/images/1/i.jpg', '/images/1/j.jpg', '/images/1/k.jpg',
+        '/images/1/l.jpg', '/images/1/m.jpg'
+      ],
+      'portfolio-2': [
+        '/images/2/a.jpg', '/images/2/b.jpg', '/images/2/c.jpg', '/images/2/d.jpg'
+      ],
+      'portfolio-3': [
+        '/images/3/a.jpg', '/images/3/aa.jpg', '/images/3/b.jpg', '/images/3/c.jpg', '/images/3/d.jpg',
+        '/images/3/e.jpg', '/images/3/f.jpg', '/images/3/g.jpg', '/images/3/h.jpg'
+      ],
+      'portfolio-4': [
+        '/images/4/a.JPEG', '/images/4/b.JPEG', '/images/4/c.JPEG', '/images/4/d.JPEG'
+      ],
+      'portfolio-5': [
+        '/images/5/a.jpg', '/images/5/aa.jpg', '/images/5/b.jpg', '/images/5/c.jpg',
+        '/images/5/d.jpg', '/images/5/e.jpg', '/images/5/f.jpg', '/images/5/g.jpg',
+        '/images/5/h.jpg', '/images/5/i.jpg', '/images/5/j.jpg', '/images/5/k.jpg'
+      ],
+      'portfolio-6': [
+        '/images/6/aa.jpg', '/images/6/b.jpg', '/images/6/c.jpg', '/images/6/d.jpg',
+        '/images/6/e.jpg', '/images/6/f.jpg', '/images/6/g.jpg', '/images/6/h.jpg',
+        '/images/6/i.jpg'
+      ]
+    };
 
-  // Seed project 1
-  const p1 = [
-    '/images/1/a.jpg', '/images/1/aa.jpg', '/images/1/b.jpg', '/images/1/c.jpg', '/images/1/d.jpg', '/images/1/e.jpg',
-    '/images/1/f.jpg', '/images/1/h.jpg', '/images/1/i.jpg', '/images/1/j.jpg', '/images/1/k.jpg',
-    '/images/1/l.jpg', '/images/1/m.jpg'
-  ];
-  p1.forEach((url, i) => {
-    seed.push({ id: `p1-img-${i}`, created_at: new Date().toISOString(), gallery_id: 'portfolio-1', image_url: url, file_name: url.split('/').pop() || 'image.jpg', sort_order: i + 1 });
-  });
+    let updated = false;
+    Object.entries(defaultProjImages).forEach(([galleryId, urls]) => {
+      const hasImages = images.some((img) => img.gallery_id === galleryId);
+      if (!hasImages) {
+        urls.forEach((url, i) => {
+          images.push({
+            id: `${galleryId}-img-${i}`,
+            created_at: new Date().toISOString(),
+            gallery_id: galleryId,
+            image_url: url,
+            file_name: url.split('/').pop() || 'image.jpg',
+            sort_order: i + 1
+          });
+        });
+        updated = true;
+      }
+    });
 
-  // Seed project 2
-  const p2 = [
-    '/images/2/a.jpg', '/images/2/b.jpg', '/images/2/c.jpg', '/images/2/d.jpg'
-  ];
-  p2.forEach((url, i) => {
-    seed.push({ id: `p2-img-${i}`, created_at: new Date().toISOString(), gallery_id: 'portfolio-2', image_url: url, file_name: url.split('/').pop() || 'image.jpg', sort_order: i + 1 });
-  });
-
-  // Seed project 3
-  const p3 = [
-    '/images/3/a.jpg', '/images/3/aa.jpg', '/images/3/b.jpg', '/images/3/c.jpg', '/images/3/d.jpg',
-    '/images/3/e.jpg', '/images/3/f.jpg', '/images/3/g.jpg', '/images/3/h.jpg'
-  ];
-  p3.forEach((url, i) => {
-    seed.push({ id: `p3-img-${i}`, created_at: new Date().toISOString(), gallery_id: 'portfolio-3', image_url: url, file_name: url.split('/').pop() || 'image.jpg', sort_order: i + 1 });
-  });
-
-  // Seed project 4
-  const p4 = [
-    '/images/4/a.JPEG', '/images/4/b.JPEG', '/images/4/c.JPEG', '/images/4/d.JPEG'
-  ];
-  p4.forEach((url, i) => {
-    seed.push({ id: `p4-img-${i}`, created_at: new Date().toISOString(), gallery_id: 'portfolio-4', image_url: url, file_name: url.split('/').pop() || 'image.jpg', sort_order: i + 1 });
-  });
-
-  // Seed project 5
-  const p5 = [
-    '/images/5/a.jpg', '/images/5/aa.jpg', '/images/5/b.jpg', '/images/5/c.jpg',
-    '/images/5/d.jpg', '/images/5/e.jpg', '/images/5/f.jpg', '/images/5/g.jpg',
-    '/images/5/h.jpg', '/images/5/i.jpg', '/images/5/j.jpg', '/images/5/k.jpg'
-  ];
-  p5.forEach((url, i) => {
-    seed.push({ id: `p5-img-${i}`, created_at: new Date().toISOString(), gallery_id: 'portfolio-5', image_url: url, file_name: url.split('/').pop() || 'image.jpg', sort_order: i + 1 });
-  });
-
-  // Seed project 6
-  const p6 = [
-    '/images/6/aa.jpg', '/images/6/b.jpg', '/images/6/c.jpg', '/images/6/d.jpg',
-    '/images/6/e.jpg', '/images/6/f.jpg', '/images/6/g.jpg', '/images/6/h.jpg',
-    '/images/6/i.jpg'
-  ];
-  p6.forEach((url, i) => {
-    seed.push({ id: `p6-img-${i}`, created_at: new Date().toISOString(), gallery_id: 'portfolio-6', image_url: url, file_name: url.split('/').pop() || 'image.jpg', sort_order: i + 1 });
-  });
-
-  localStorage.setItem(IMAGES_KEY, JSON.stringify(seed));
-  return seed;
+    if (updated || !stored) {
+      localStorage.setItem(IMAGES_KEY, JSON.stringify(images));
+    }
+    return images;
+  } catch {
+    return [];
+  }
 }
 
 function saveLocalImages(images: GalleryImage[]): void {
