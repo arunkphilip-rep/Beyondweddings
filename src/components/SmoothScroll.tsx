@@ -5,6 +5,11 @@ import Lenis from 'lenis';
 
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   useEffect(() => {
+    // Disable automatic browser scroll restoration on refresh/load
+    if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+
     // Scroll behavior configuration for ultra-smooth rendering (60Hz to 144Hz)
     const lenis = new Lenis({
       lerp: 0.08,
@@ -16,6 +21,10 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     });
 
     (window as any).lenisInstance = lenis;
+
+    // Immediately force scroll to the very top on load
+    window.scrollTo(0, 0);
+    lenis.scrollTo(0, { immediate: true });
 
     let animFrameId: number;
     function raf(time: number) {
