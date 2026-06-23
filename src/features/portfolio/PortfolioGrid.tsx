@@ -21,7 +21,7 @@ const projectsData: Project[] = [
     title: 'Mariam & Karen',
     cover: '/images/1/a.jpg',
     images: [
-      '/images/1/a.jpg', '/images/1/b.jpg', '/images/1/c.jpg', '/images/1/d.jpg', '/images/1/e.jpg',
+      '/images/1/a.jpg', '/images/1/aa.jpg', '/images/1/b.jpg', '/images/1/c.jpg', '/images/1/d.jpg', '/images/1/e.jpg',
       '/images/1/f.jpg', '/images/1/h.jpg', '/images/1/i.jpg', '/images/1/j.jpg', '/images/1/k.jpg',
       '/images/1/l.jpg', '/images/1/m.jpg'
     ]
@@ -29,11 +29,9 @@ const projectsData: Project[] = [
   {
     id: 2,
     title: 'Xhenisha & Erald',
-    cover: '/images/6/aa.jpg',
+    cover: '/images/2/a.jpg',
     images: [
-      '/images/6/aa.jpg', '/images/6/b.jpg', '/images/6/c.jpg', '/images/6/d.jpg',
-      '/images/6/e.jpg', '/images/6/f.jpg', '/images/6/g.jpg', '/images/6/h.jpg',
-      '/images/6/i.jpg'
+      '/images/2/a.jpg', '/images/2/b.jpg', '/images/2/c.jpg', '/images/2/d.jpg'
     ]
   },
   {
@@ -41,18 +39,36 @@ const projectsData: Project[] = [
     title: 'Nazeli & Raffi',
     cover: '/images/3/a.jpg',
     images: [
-      '/images/3/a.jpg', '/images/3/b.jpg', '/images/3/c.jpg', '/images/3/d.jpg',
+      '/images/3/a.jpg', '/images/3/aa.jpg', '/images/3/b.jpg', '/images/3/c.jpg', '/images/3/d.jpg',
       '/images/3/e.jpg', '/images/3/f.jpg', '/images/3/g.jpg', '/images/3/h.jpg'
     ]
   },
   {
     id: 4,
     title: 'Elena & Andrea',
+    cover: '/images/4/a.JPEG',
+    images: [
+      '/images/4/a.JPEG', '/images/4/b.JPEG', '/images/4/c.JPEG', '/images/4/d.JPEG'
+    ]
+  },
+  {
+    id: 5,
+    title: 'Elena & Andrea — Editorial',
     cover: '/images/5/a.jpg',
     images: [
       '/images/5/a.jpg', '/images/5/aa.jpg', '/images/5/b.jpg', '/images/5/c.jpg',
       '/images/5/d.jpg', '/images/5/e.jpg', '/images/5/f.jpg', '/images/5/g.jpg',
       '/images/5/h.jpg', '/images/5/i.jpg', '/images/5/j.jpg', '/images/5/k.jpg'
+    ]
+  },
+  {
+    id: 6,
+    title: 'Xhenisha & Erald — Fine Art',
+    cover: '/images/6/aa.jpg',
+    images: [
+      '/images/6/aa.jpg', '/images/6/b.jpg', '/images/6/c.jpg', '/images/6/d.jpg',
+      '/images/6/e.jpg', '/images/6/f.jpg', '/images/6/g.jpg', '/images/6/h.jpg',
+      '/images/6/i.jpg'
     ]
   }
 ];
