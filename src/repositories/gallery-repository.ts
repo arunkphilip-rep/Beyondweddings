@@ -17,16 +17,15 @@ export interface GalleryRepository {
 }
 
 // ─── localStorage helpers ───
+const SEED_VERSION = 'v3_dynamic_portfolio_6';
+
 function getLocalGalleries(): Gallery[] {
   if (typeof window === 'undefined') return [];
   try {
     const stored = localStorage.getItem(GALLERIES_KEY);
-    let galleries: Gallery[] = [];
-    if (stored) {
-      galleries = JSON.parse(stored);
-    }
-
-    // Default 6 portfolio projects that should always be present in local storage
+    const version = localStorage.getItem('bw_storage_version');
+    
+    // Default 6 portfolio projects
     const defaults: Gallery[] = [
       {
         id: 'portfolio-1',
@@ -90,21 +89,18 @@ function getLocalGalleries(): Gallery[] {
       },
     ];
 
-    let updated = false;
-    defaults.forEach((def) => {
-      const exists = galleries.some((g) => g.id === def.id || g.slug === def.slug);
-      if (!exists) {
-        galleries.push(def);
-        updated = true;
-      }
-    });
-
-    if (updated || !stored) {
-      // Sort newest created at first
-      galleries.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-      localStorage.setItem(GALLERIES_KEY, JSON.stringify(galleries));
+    if (version !== SEED_VERSION) {
+      // Overwrite/Force seed the 6 galleries exactly once
+      localStorage.setItem(GALLERIES_KEY, JSON.stringify(defaults));
+      localStorage.setItem('bw_storage_version', SEED_VERSION);
+      return defaults;
     }
-    return galleries;
+
+    if (stored) {
+      return JSON.parse(stored);
+    }
+
+    return defaults;
   } catch {
     return [];
   }
@@ -119,10 +115,7 @@ function getLocalImages(): GalleryImage[] {
   if (typeof window === 'undefined') return [];
   try {
     const stored = localStorage.getItem(IMAGES_KEY);
-    let images: GalleryImage[] = [];
-    if (stored) {
-      images = JSON.parse(stored);
-    }
+    const version = localStorage.getItem('bw_images_version');
 
     const defaultProjImages: Record<string, string[]> = {
       'portfolio-1': [
@@ -152,28 +145,31 @@ function getLocalImages(): GalleryImage[] {
       ]
     };
 
-    let updated = false;
+    const defaultImagesList: GalleryImage[] = [];
     Object.entries(defaultProjImages).forEach(([galleryId, urls]) => {
-      const hasImages = images.some((img) => img.gallery_id === galleryId);
-      if (!hasImages) {
-        urls.forEach((url, i) => {
-          images.push({
-            id: `${galleryId}-img-${i}`,
-            created_at: new Date().toISOString(),
-            gallery_id: galleryId,
-            image_url: url,
-            file_name: url.split('/').pop() || 'image.jpg',
-            sort_order: i + 1
-          });
+      urls.forEach((url, i) => {
+        defaultImagesList.push({
+          id: `${galleryId}-img-${i}`,
+          created_at: new Date().toISOString(),
+          gallery_id: galleryId,
+          image_url: url,
+          file_name: url.split('/').pop() || 'image.jpg',
+          sort_order: i + 1
         });
-        updated = true;
-      }
+      });
     });
 
-    if (updated || !stored) {
-      localStorage.setItem(IMAGES_KEY, JSON.stringify(images));
+    if (version !== SEED_VERSION) {
+      // Overwrite/Force seed images exactly once
+      localStorage.setItem(IMAGES_KEY, JSON.stringify(defaultImagesList));
+      localStorage.setItem('bw_images_version', SEED_VERSION);
+      return defaultImagesList;
     }
-    return images;
+
+    if (stored) {
+      return JSON.parse(stored);
+    }
+    return defaultImagesList;
   } catch {
     return [];
   }
