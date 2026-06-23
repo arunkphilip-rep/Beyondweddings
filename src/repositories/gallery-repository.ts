@@ -24,26 +24,66 @@ function getLocalGalleries(): Gallery[] {
     if (stored) return JSON.parse(stored);
   } catch { /* ignore */ }
 
-  // Seed with demo data on first access
+  // Seed with 6 portfolio projects on first access
   const seed: Gallery[] = [
     {
-      id: 'demo-gallery-1',
-      created_at: '2026-05-18T10:00:00Z',
-      gallery_name: 'Rahul & Sneha Wedding',
-      slug: 'rahul-sneha',
-      cover_image: '/images/4/a.JPEG',
-      event_date: '2026-05-18',
-      venue: 'Palakkad, Kerala',
+      id: 'portfolio-1',
+      created_at: '2026-06-01T10:00:00Z',
+      gallery_name: 'Mariam & Karen',
+      slug: 'mariam-karen',
+      cover_image: '/images/1/a.jpg',
+      event_date: '2026-06-01',
+      venue: 'Rome, Italy',
       user_id: 'admin',
     },
     {
-      id: 'demo-gallery-2',
-      created_at: '2026-01-15T10:00:00Z',
-      gallery_name: 'Demo Wedding Story',
-      slug: 'demo',
-      cover_image: '/images/1/a.jpg',
-      event_date: '2026-01-15',
-      venue: 'Kochi, Kerala',
+      id: 'portfolio-2',
+      created_at: '2026-05-15T10:00:00Z',
+      gallery_name: 'Xhenisha & Erald',
+      slug: 'xhenisha-erald',
+      cover_image: '/images/2/a.jpg',
+      event_date: '2026-05-15',
+      venue: 'Tirana, Albania',
+      user_id: 'admin',
+    },
+    {
+      id: 'portfolio-3',
+      created_at: '2026-04-20T10:00:00Z',
+      gallery_name: 'Nazeli & Raffi',
+      slug: 'nazeli-raffi',
+      cover_image: '/images/3/a.jpg',
+      event_date: '2026-04-20',
+      venue: 'Yerevan, Armenia',
+      user_id: 'admin',
+    },
+    {
+      id: 'portfolio-4',
+      created_at: '2026-03-10T10:00:00Z',
+      gallery_name: 'Elena & Andrea',
+      slug: 'elena-andrea',
+      cover_image: '/images/4/a.JPEG',
+      event_date: '2026-03-10',
+      venue: 'Lake Como, Italy',
+      user_id: 'admin',
+    },
+    {
+      id: 'portfolio-5',
+      created_at: '2026-02-18T10:00:00Z',
+      gallery_name: 'Elena & Andrea — Editorial',
+      slug: 'elena-andrea-editorial',
+      cover_image: '/images/5/a.jpg',
+      event_date: '2026-02-18',
+      venue: 'Milan, Italy',
+      user_id: 'admin',
+    },
+    {
+      id: 'portfolio-6',
+      created_at: '2026-01-25T10:00:00Z',
+      gallery_name: 'Xhenisha & Erald — Fine Art',
+      slug: 'xhenisha-erald-fine-art',
+      cover_image: '/images/6/aa.jpg',
+      event_date: '2026-01-25',
+      venue: 'Paris, France',
       user_id: 'admin',
     },
   ];
@@ -63,20 +103,63 @@ function getLocalImages(): GalleryImage[] {
     if (stored) return JSON.parse(stored);
   } catch { /* ignore */ }
 
-  // Seed demo images
-  const demoUrls = [
-    '/images/4/a.JPEG', '/images/4/b.JPEG', '/images/4/c.JPEG', '/images/4/d.JPEG',
-    '/images/1/b.jpg', '/images/1/c.jpg', '/images/1/d.jpg', '/images/1/e.jpg',
-    '/images/2/b.jpg', '/images/2/c.jpg', '/images/3/b.jpg', '/images/3/c.jpg',
+  const seed: GalleryImage[] = [];
+
+  // Seed project 1
+  const p1 = [
+    '/images/1/a.jpg', '/images/1/aa.jpg', '/images/1/b.jpg', '/images/1/c.jpg', '/images/1/d.jpg', '/images/1/e.jpg',
+    '/images/1/f.jpg', '/images/1/h.jpg', '/images/1/i.jpg', '/images/1/j.jpg', '/images/1/k.jpg',
+    '/images/1/l.jpg', '/images/1/m.jpg'
   ];
-  const seed: GalleryImage[] = demoUrls.map((url, i) => ({
-    id: `seed-img-${i}`,
-    created_at: new Date().toISOString(),
-    gallery_id: 'demo-gallery-1',
-    image_url: url,
-    file_name: url.split('/').pop() || 'image.jpg',
-    sort_order: i + 1,
-  }));
+  p1.forEach((url, i) => {
+    seed.push({ id: `p1-img-${i}`, created_at: new Date().toISOString(), gallery_id: 'portfolio-1', image_url: url, file_name: url.split('/').pop() || 'image.jpg', sort_order: i + 1 });
+  });
+
+  // Seed project 2
+  const p2 = [
+    '/images/2/a.jpg', '/images/2/b.jpg', '/images/2/c.jpg', '/images/2/d.jpg'
+  ];
+  p2.forEach((url, i) => {
+    seed.push({ id: `p2-img-${i}`, created_at: new Date().toISOString(), gallery_id: 'portfolio-2', image_url: url, file_name: url.split('/').pop() || 'image.jpg', sort_order: i + 1 });
+  });
+
+  // Seed project 3
+  const p3 = [
+    '/images/3/a.jpg', '/images/3/aa.jpg', '/images/3/b.jpg', '/images/3/c.jpg', '/images/3/d.jpg',
+    '/images/3/e.jpg', '/images/3/f.jpg', '/images/3/g.jpg', '/images/3/h.jpg'
+  ];
+  p3.forEach((url, i) => {
+    seed.push({ id: `p3-img-${i}`, created_at: new Date().toISOString(), gallery_id: 'portfolio-3', image_url: url, file_name: url.split('/').pop() || 'image.jpg', sort_order: i + 1 });
+  });
+
+  // Seed project 4
+  const p4 = [
+    '/images/4/a.JPEG', '/images/4/b.JPEG', '/images/4/c.JPEG', '/images/4/d.JPEG'
+  ];
+  p4.forEach((url, i) => {
+    seed.push({ id: `p4-img-${i}`, created_at: new Date().toISOString(), gallery_id: 'portfolio-4', image_url: url, file_name: url.split('/').pop() || 'image.jpg', sort_order: i + 1 });
+  });
+
+  // Seed project 5
+  const p5 = [
+    '/images/5/a.jpg', '/images/5/aa.jpg', '/images/5/b.jpg', '/images/5/c.jpg',
+    '/images/5/d.jpg', '/images/5/e.jpg', '/images/5/f.jpg', '/images/5/g.jpg',
+    '/images/5/h.jpg', '/images/5/i.jpg', '/images/5/j.jpg', '/images/5/k.jpg'
+  ];
+  p5.forEach((url, i) => {
+    seed.push({ id: `p5-img-${i}`, created_at: new Date().toISOString(), gallery_id: 'portfolio-5', image_url: url, file_name: url.split('/').pop() || 'image.jpg', sort_order: i + 1 });
+  });
+
+  // Seed project 6
+  const p6 = [
+    '/images/6/aa.jpg', '/images/6/b.jpg', '/images/6/c.jpg', '/images/6/d.jpg',
+    '/images/6/e.jpg', '/images/6/f.jpg', '/images/6/g.jpg', '/images/6/h.jpg',
+    '/images/6/i.jpg'
+  ];
+  p6.forEach((url, i) => {
+    seed.push({ id: `p6-img-${i}`, created_at: new Date().toISOString(), gallery_id: 'portfolio-6', image_url: url, file_name: url.split('/').pop() || 'image.jpg', sort_order: i + 1 });
+  });
+
   localStorage.setItem(IMAGES_KEY, JSON.stringify(seed));
   return seed;
 }

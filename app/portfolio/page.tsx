@@ -5,7 +5,7 @@ import PortfolioGrid from '../../src/features/portfolio/PortfolioGrid';
 import StackingGallery from '../../src/features/portfolio/StackingGallery';
 
 interface Project {
-  id: number;
+  id: string | number;
   title: string;
   cover: string;
   images: string[];

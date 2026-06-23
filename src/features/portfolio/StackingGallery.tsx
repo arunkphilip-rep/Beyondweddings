@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { X } from 'lucide-react';
 
 interface Project {
-  id: number;
+  id: string | number;
   title: string;
   cover: string;
   images: string[];

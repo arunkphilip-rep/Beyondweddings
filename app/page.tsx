@@ -6,7 +6,7 @@ import StackingGallery from '../src/features/portfolio/StackingGallery';
 import ContactForm from '../src/features/inquiries/ContactForm';
 
 interface Project {
-  id: number;
+  id: string | number;
   title: string;
   cover: string;
   images: string[];
