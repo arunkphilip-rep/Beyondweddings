@@ -30,7 +30,7 @@ export default function PortfolioGrid({ onOpenProject, limit }: PortfolioGridPro
             return {
               id: g.id,
               title: g.gallery_name,
-              cover: g.cover_image || '/images/1/a.jpg',
+              cover: g.cover_image || '/images/bibin-anju/a.jpg',
               images: imgs.map((img) => img.image_url),
             };
           })

@@ -30,10 +30,10 @@ export default function Home() {
 
   // Hero slideshow images
   const heroImages = [
-    '/images/1/aa.jpg',
-    '/images/2/a.jpg',
-    '/images/3/aa.jpg',
-    '/images/4/a.jpeg'
+    '/images/bibin-anju/aa.jpg',
+    '/images/mathew-haritha/a.jpg',
+    '/images/johney-jaisy/aa.jpg',
+    '/images/sobin-ditty/a.JPEG'
   ];
 
   // Testimonials data
@@ -214,7 +214,7 @@ export default function Home() {
                 <div className="about-image-col">
                   <div className="about-image-wrapper rounded-2xl">
                     <img
-                      src="/images/1/e.jpg"
+                      src="/images/bibin-anju/e.jpg"
                       alt="BEYOND WEDDINGS Studio"
                       className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                       loading="lazy"

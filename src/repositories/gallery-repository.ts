@@ -17,7 +17,7 @@ export interface GalleryRepository {
 }
 
 // ─── localStorage helpers ───
-const SEED_VERSION = 'v3_dynamic_portfolio_6';
+const SEED_VERSION = 'v5_couple_names_rename';
 
 function getLocalGalleries(): Gallery[] {
   if (typeof window === 'undefined') return [];
@@ -25,14 +25,14 @@ function getLocalGalleries(): Gallery[] {
     const stored = localStorage.getItem(GALLERIES_KEY);
     const version = localStorage.getItem('bw_storage_version');
     
-    // Default 6 portfolio projects
+    // Default 6 portfolio projects renamed
     const defaults: Gallery[] = [
       {
         id: 'portfolio-1',
         created_at: '2026-06-01T10:00:00Z',
-        gallery_name: 'Mariam & Karen',
-        slug: 'mariam-karen',
-        cover_image: '/images/1/a.jpg',
+        gallery_name: 'Bibin & Anju',
+        slug: 'bibin-anju',
+        cover_image: '/images/bibin-anju/a.jpg',
         event_date: '2026-06-01',
         venue: 'Rome, Italy',
         user_id: 'admin',
@@ -40,9 +40,9 @@ function getLocalGalleries(): Gallery[] {
       {
         id: 'portfolio-2',
         created_at: '2026-05-15T10:00:00Z',
-        gallery_name: 'Xhenisha & Erald',
-        slug: 'xhenisha-erald',
-        cover_image: '/images/2/a.jpg',
+        gallery_name: 'Mathew & Haritha',
+        slug: 'mathew-haritha',
+        cover_image: '/images/mathew-haritha/a.jpg',
         event_date: '2026-05-15',
         venue: 'Tirana, Albania',
         user_id: 'admin',
@@ -50,9 +50,9 @@ function getLocalGalleries(): Gallery[] {
       {
         id: 'portfolio-3',
         created_at: '2026-04-20T10:00:00Z',
-        gallery_name: 'Nazeli & Raffi',
-        slug: 'nazeli-raffi',
-        cover_image: '/images/3/a.jpg',
+        gallery_name: 'Johney & Jaisy',
+        slug: 'johney-jaisy',
+        cover_image: '/images/johney-jaisy/a.jpg',
         event_date: '2026-04-20',
         venue: 'Yerevan, Armenia',
         user_id: 'admin',
@@ -60,9 +60,9 @@ function getLocalGalleries(): Gallery[] {
       {
         id: 'portfolio-4',
         created_at: '2026-03-10T10:00:00Z',
-        gallery_name: 'Elena & Andrea',
-        slug: 'elena-andrea',
-        cover_image: '/images/4/a.JPEG',
+        gallery_name: 'Sobin & Ditty',
+        slug: 'sobin-ditty',
+        cover_image: '/images/sobin-ditty/a.JPEG',
         event_date: '2026-03-10',
         venue: 'Lake Como, Italy',
         user_id: 'admin',
@@ -70,9 +70,9 @@ function getLocalGalleries(): Gallery[] {
       {
         id: 'portfolio-5',
         created_at: '2026-02-18T10:00:00Z',
-        gallery_name: 'Elena & Andrea — Editorial',
-        slug: 'elena-andrea-editorial',
-        cover_image: '/images/5/a.jpg',
+        gallery_name: 'Dijo & Anju',
+        slug: 'dijo-anju',
+        cover_image: '/images/dijo-anju/a.jpg',
         event_date: '2026-02-18',
         venue: 'Milan, Italy',
         user_id: 'admin',
@@ -80,9 +80,9 @@ function getLocalGalleries(): Gallery[] {
       {
         id: 'portfolio-6',
         created_at: '2026-01-25T10:00:00Z',
-        gallery_name: 'Xhenisha & Erald — Fine Art',
-        slug: 'xhenisha-erald-fine-art',
-        cover_image: '/images/6/aa.jpg',
+        gallery_name: 'Arun & Rosmin',
+        slug: 'arun-rosmin',
+        cover_image: '/images/arun-rosmin/aa.jpg',
         event_date: '2026-01-25',
         venue: 'Paris, France',
         user_id: 'admin',
@@ -119,29 +119,29 @@ function getLocalImages(): GalleryImage[] {
 
     const defaultProjImages: Record<string, string[]> = {
       'portfolio-1': [
-        '/images/1/a.jpg', '/images/1/aa.jpg', '/images/1/b.jpg', '/images/1/c.jpg', '/images/1/d.jpg', '/images/1/e.jpg',
-        '/images/1/f.jpg', '/images/1/h.jpg', '/images/1/i.jpg', '/images/1/j.jpg', '/images/1/k.jpg',
-        '/images/1/l.jpg', '/images/1/m.jpg'
+        '/images/bibin-anju/a.jpg', '/images/bibin-anju/aa.jpg', '/images/bibin-anju/b.jpg', '/images/bibin-anju/c.jpg', '/images/bibin-anju/d.jpg', '/images/bibin-anju/e.jpg',
+        '/images/bibin-anju/f.jpg', '/images/bibin-anju/h.jpg', '/images/bibin-anju/i.jpg', '/images/bibin-anju/j.jpg', '/images/bibin-anju/k.jpg',
+        '/images/bibin-anju/l.jpg', '/images/bibin-anju/m.jpg'
       ],
       'portfolio-2': [
-        '/images/2/a.jpg', '/images/2/b.jpg', '/images/2/c.jpg', '/images/2/d.jpg'
+        '/images/mathew-haritha/a.jpg', '/images/mathew-haritha/b.jpg', '/images/mathew-haritha/c.jpg', '/images/mathew-haritha/d.jpg'
       ],
       'portfolio-3': [
-        '/images/3/a.jpg', '/images/3/aa.jpg', '/images/3/b.jpg', '/images/3/c.jpg', '/images/3/d.jpg',
-        '/images/3/e.jpg', '/images/3/f.jpg', '/images/3/g.jpg', '/images/3/h.jpg'
+        '/images/johney-jaisy/a.jpg', '/images/johney-jaisy/aa.jpg', '/images/johney-jaisy/b.jpg', '/images/johney-jaisy/c.jpg', '/images/johney-jaisy/d.jpg',
+        '/images/johney-jaisy/e.jpg', '/images/johney-jaisy/f.jpg', '/images/johney-jaisy/g.jpg', '/images/johney-jaisy/h.jpg'
       ],
       'portfolio-4': [
-        '/images/4/a.JPEG', '/images/4/b.JPEG', '/images/4/c.JPEG', '/images/4/d.JPEG'
+        '/images/sobin-ditty/a.JPEG', '/images/sobin-ditty/b.JPEG', '/images/sobin-ditty/c.JPEG', '/images/sobin-ditty/d.JPEG'
       ],
       'portfolio-5': [
-        '/images/5/a.jpg', '/images/5/aa.jpg', '/images/5/b.jpg', '/images/5/c.jpg',
-        '/images/5/d.jpg', '/images/5/e.jpg', '/images/5/f.jpg', '/images/5/g.jpg',
-        '/images/5/h.jpg', '/images/5/i.jpg', '/images/5/j.jpg', '/images/5/k.jpg'
+        '/images/dijo-anju/a.jpg', '/images/dijo-anju/aa.jpg', '/images/dijo-anju/b.jpg', '/images/dijo-anju/c.jpg',
+        '/images/dijo-anju/d.jpg', '/images/dijo-anju/e.jpg', '/images/dijo-anju/f.jpg', '/images/dijo-anju/g.jpg',
+        '/images/dijo-anju/h.jpg', '/images/dijo-anju/i.jpg', '/images/dijo-anju/j.jpg', '/images/dijo-anju/k.jpg'
       ],
       'portfolio-6': [
-        '/images/6/aa.jpg', '/images/6/b.jpg', '/images/6/c.jpg', '/images/6/d.jpg',
-        '/images/6/e.jpg', '/images/6/f.jpg', '/images/6/g.jpg', '/images/6/h.jpg',
-        '/images/6/i.jpg'
+        '/images/arun-rosmin/aa.jpg', '/images/arun-rosmin/b.jpg', '/images/arun-rosmin/c.jpg', '/images/arun-rosmin/d.jpg',
+        '/images/arun-rosmin/e.jpg', '/images/arun-rosmin/f.jpg', '/images/arun-rosmin/g.jpg', '/images/arun-rosmin/h.jpg',
+        '/images/arun-rosmin/i.jpg'
       ]
     };
 

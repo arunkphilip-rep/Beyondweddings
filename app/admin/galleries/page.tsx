@@ -360,7 +360,7 @@ export default function AdminGalleriesPage() {
                     <input
                       type="text"
                       className="admin-input"
-                      placeholder="Image URL (e.g. /images/4/a.JPEG)"
+                      placeholder="Image URL (e.g. /images/sobin-ditty/a.JPEG)"
                       value={newImageUrl}
                       onChange={(e) => setNewImageUrl(e.target.value)}
                       style={{ flex: 1 }}

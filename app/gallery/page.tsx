@@ -61,7 +61,7 @@ export default function GalleryList() {
               >
                 <div className="aspect-[4/3] w-full overflow-hidden bg-[#E8E3DC] relative" style={{ transform: 'translateZ(0)' }}>
                   <img
-                    src={gallery.cover_image || '/images/1/a.jpg'}
+                    src={gallery.cover_image || '/images/bibin-anju/a.jpg'}
                     alt={gallery.gallery_name}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-103"
                     style={{ transform: 'translateZ(0)', willChange: 'transform' }}
