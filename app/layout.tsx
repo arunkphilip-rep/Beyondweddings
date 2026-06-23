@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Preloader from "../src/components/Preloader";
-import Navbar from "../src/components/Navbar";
-import Footer from "../src/components/Footer";
-import SmoothScroll from "../src/components/SmoothScroll";
-import ScrollToTop from "../src/components/ScrollToTop";
+import SiteShell from "../src/components/SiteShell";
 
 export const metadata: Metadata = {
   title: "BEYOND WEDDINGS | Fine Art & Editorial Wedding Photography",
@@ -24,15 +20,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body className="min-h-full flex flex-col font-sans">
-        <Preloader />
-        <Navbar />
-        <SmoothScroll>
+        <SiteShell>
           {children}
-        </SmoothScroll>
-        <ScrollToTop />
-        <Footer />
+        </SiteShell>
       </body>
     </html>
   );
 }
-

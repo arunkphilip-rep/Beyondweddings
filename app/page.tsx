@@ -374,17 +374,14 @@ export default function Home() {
                 <div className="contact-details mt-6 flex flex-col gap-6">
                   <div className="contact-item">
                     <span className="contact-item-label">PHONE</span>
-                    <a href="tel:+919876543210" className="text-text hover:text-accent font-light">
-                      +91 98765 43210
-                    </a>
-                    <a href="tel:+919876543211" className="text-text hover:text-accent font-light">
-                      +91 98765 43211
+                    <a href="tel:+918714003230" className="text-text hover:text-accent font-light">
+                      +91 87140 03230
                     </a>
                   </div>
                   <div className="contact-item">
                     <span className="contact-item-label">EMAIL</span>
-                    <a href="mailto:info@beyondweddings.com" className="text-text hover:text-accent font-light">
-                      info@beyondweddings.com
+                    <a href="mailto:beyondweddingss@gmail.com" className="text-text hover:text-accent font-light">
+                      beyondweddingss@gmail.com
                     </a>
                   </div>
                   <div className="contact-item">

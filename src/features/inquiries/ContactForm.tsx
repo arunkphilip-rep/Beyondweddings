@@ -30,7 +30,7 @@ export default function ContactForm() {
     setErrorMsg('');
 
     try {
-      // 1. Submit lead details to database / localStorage mock
+      // 1. Submit lead details to database / localStorage
       await inquiryService.submitInquiry({
         bride_name: formData.bride_name,
         groom_name: formData.groom_name || undefined,
@@ -53,7 +53,6 @@ export default function ContactForm() {
         budget: formData.budget
       });
 
-      // Open in a new tab
       window.open(waUrl, '_blank');
 
       // Reset form fields
@@ -68,14 +67,14 @@ export default function ContactForm() {
         message: ''
       });
 
-      // Show success indicator for a brief duration
       setTimeout(() => {
         setSuccess(false);
       }, 5000);
 
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Something went wrong. Please check fields.';
       console.error(err);
-      setErrorMsg(err.message || 'Something went wrong. Please check fields.');
+      setErrorMsg(message);
     } finally {
       setLoading(false);
     }
@@ -87,6 +86,14 @@ export default function ContactForm() {
         {errorMsg && (
           <div className="text-red-500 text-xs tracking-wider uppercase mb-2">
             {errorMsg}
+          </div>
+        )}
+
+        {success && (
+          <div className="text-green-600 text-xs tracking-wider uppercase mb-2" style={{
+            animation: 'fadeUp 0.5s ease forwards'
+          }}>
+            ✓ Inquiry submitted successfully! Opening WhatsApp...
           </div>
         )}
 
@@ -165,7 +172,6 @@ export default function ContactForm() {
           rows={5}
           value={formData.message}
           onChange={handleChange}
-          required
           disabled={loading}
         />
 
@@ -175,7 +181,7 @@ export default function ContactForm() {
           style={{ opacity: loading || success ? 0.6 : 1 }}
           disabled={loading || success}
         >
-          {loading ? 'SENDING...' : success ? 'THANK YOU' : 'SEND INQUIRY'}
+          {loading ? 'SENDING...' : success ? '✓ THANK YOU' : 'SEND INQUIRY'}
         </button>
       </form>
     </div>

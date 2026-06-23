@@ -66,19 +66,18 @@ export default function ContactPage() {
                 <div>
                   <div className="contact-item-label">WhatsApp</div>
                   <a
-                    href="https://wa.me/919876543210"
+                    href="https://wa.me/918714003230"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-text hover:text-accent font-light text-sm"
                   >
-                    +91 98765 43210
+                    +91 87140 03230
                   </a>
                 </div>
 
                 <div>
                   <div className="contact-item-label">Phone</div>
-                  <a href="tel:+919876543210" className="text-text hover:text-accent font-light text-sm block">+91 98765 43210</a>
-                  <a href="tel:+919876543211" className="text-text hover:text-accent font-light text-sm block">+91 98765 43211</a>
+                  <a href="tel:+918714003230" className="text-text hover:text-accent font-light text-sm block">+91 87140 03230</a>
                 </div>
 
                 <div>
@@ -95,8 +94,8 @@ export default function ContactPage() {
 
                 <div>
                   <div className="contact-item-label">Email</div>
-                  <a href="mailto:info@beyondweddings.com" className="text-text hover:text-accent font-light text-sm">
-                    info@beyondweddings.com
+                  <a href="mailto:beyondweddingss@gmail.com" className="text-text hover:text-accent font-light text-sm">
+                    beyondweddingss@gmail.com
                   </a>
                 </div>
               </div>

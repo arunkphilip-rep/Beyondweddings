@@ -14,15 +14,29 @@ export class InquiryService {
     budget?: string;
     message?: string;
   }): Promise<Inquiry> {
-    // Validate inputs
     if (!data.bride_name.trim()) {
       throw new Error('Bride name is required.');
     }
     if (!data.phone.trim()) {
       throw new Error('Phone number is required.');
     }
-
     return this.repository.create(data);
+  }
+
+  async getAllInquiries(): Promise<Inquiry[]> {
+    return this.repository.getAll();
+  }
+
+  async getInquiry(id: string): Promise<Inquiry | null> {
+    return this.repository.getById(id);
+  }
+
+  async updateInquiryStatus(id: string, status: Inquiry['status']): Promise<Inquiry | null> {
+    return this.repository.updateStatus(id, status);
+  }
+
+  async deleteInquiry(id: string): Promise<boolean> {
+    return this.repository.remove(id);
   }
 
   getWhatsAppUrl(data: {
@@ -32,7 +46,7 @@ export class InquiryService {
     venue?: string;
     budget?: string;
   }): string {
-    const whatsappNum = '919876543210'; // Representative placeholder or can read from settings
+    const whatsappNum = '918714003230';
     const groomText = data.groom_name ? ` and ${data.groom_name}` : '';
     const dateText = data.wedding_date ? ` on ${data.wedding_date}` : '';
     const venueText = data.venue ? ` at ${data.venue}` : '';

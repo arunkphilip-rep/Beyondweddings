@@ -110,7 +110,7 @@ export default function AboutPage() {
               Contact Us
             </a>
             <a
-              href="https://wa.me/919876543210"
+              href="https://wa.me/918714003230"
               target="_blank"
               rel="noopener noreferrer"
               className="px-8 py-4 border border-accent text-text text-[10px] tracking-[3px] uppercase hover:bg-accent hover:text-white transition-all duration-300 rounded-xl"

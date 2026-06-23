@@ -154,12 +154,17 @@ export default function GalleryView() {
               {col1.map((img) => {
                 const idx = images.indexOf(img);
                 return (
-                  <div key={img.id} className="relative group cursor-pointer overflow-hidden rounded-2xl bg-[#E8E3DC] aspect-auto">
+                  <div 
+                    key={img.id} 
+                    className="relative group cursor-pointer overflow-hidden rounded-2xl bg-[#E8E3DC] aspect-auto"
+                    style={{ transform: 'translateZ(0)' }}
+                  >
                     <img
                       src={img.image_url}
                       alt={img.file_name}
                       onClick={() => setLightboxIndex(idx)}
                       className="w-full h-auto object-cover transition-transform duration-700 hover:scale-102"
+                      style={{ transform: 'translateZ(0)', willChange: 'transform' }}
                       loading="lazy"
                     />
                     <button
@@ -168,6 +173,7 @@ export default function GalleryView() {
                         handleDownload(img.image_url, img.file_name);
                       }}
                       className="absolute bottom-4 right-4 bg-white/90 text-text p-2.5 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white hover:scale-105"
+                      style={{ transform: 'translateZ(0)', willChange: 'transform, opacity' }}
                       aria-label="Download Image"
                     >
                       <Download size={13} />
@@ -182,12 +188,17 @@ export default function GalleryView() {
               {col2.map((img) => {
                 const idx = images.indexOf(img);
                 return (
-                  <div key={img.id} className="relative group cursor-pointer overflow-hidden rounded-2xl bg-[#E8E3DC] aspect-auto">
+                  <div 
+                    key={img.id} 
+                    className="relative group cursor-pointer overflow-hidden rounded-2xl bg-[#E8E3DC] aspect-auto"
+                    style={{ transform: 'translateZ(0)' }}
+                  >
                     <img
                       src={img.image_url}
                       alt={img.file_name}
                       onClick={() => setLightboxIndex(idx)}
                       className="w-full h-auto object-cover transition-transform duration-700 hover:scale-102"
+                      style={{ transform: 'translateZ(0)', willChange: 'transform' }}
                       loading="lazy"
                     />
                     <button
@@ -196,6 +207,7 @@ export default function GalleryView() {
                         handleDownload(img.image_url, img.file_name);
                       }}
                       className="absolute bottom-4 right-4 bg-white/90 text-text p-2.5 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white hover:scale-105"
+                      style={{ transform: 'translateZ(0)', willChange: 'transform, opacity' }}
                       aria-label="Download Image"
                     >
                       <Download size={13} />
@@ -210,12 +222,17 @@ export default function GalleryView() {
               {col3.map((img) => {
                 const idx = images.indexOf(img);
                 return (
-                  <div key={img.id} className="relative group cursor-pointer overflow-hidden rounded-2xl bg-[#E8E3DC] aspect-auto">
+                  <div 
+                    key={img.id} 
+                    className="relative group cursor-pointer overflow-hidden rounded-2xl bg-[#E8E3DC] aspect-auto"
+                    style={{ transform: 'translateZ(0)' }}
+                  >
                     <img
                       src={img.image_url}
                       alt={img.file_name}
                       onClick={() => setLightboxIndex(idx)}
                       className="w-full h-auto object-cover transition-transform duration-700 hover:scale-102"
+                      style={{ transform: 'translateZ(0)', willChange: 'transform' }}
                       loading="lazy"
                     />
                     <button
@@ -224,6 +241,7 @@ export default function GalleryView() {
                         handleDownload(img.image_url, img.file_name);
                       }}
                       className="absolute bottom-4 right-4 bg-white/90 text-text p-2.5 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white hover:scale-105"
+                      style={{ transform: 'translateZ(0)', willChange: 'transform, opacity' }}
                       aria-label="Download Image"
                     >
                       <Download size={13} />

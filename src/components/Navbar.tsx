@@ -113,9 +113,8 @@ export default function Navbar() {
         
         <div className="overlay-main-section">
           <div className="overlay-left-col overlay-contact-details">
-            <a href="tel:+919876543210">+91 98765 43210</a>
-            <a href="tel:+919876543211">+91 98765 43211</a>
-            <a href="mailto:info@beyondweddings.com">info@beyondweddings.com</a>
+            <a href="tel:+918714003230">+91 87140 03230</a>
+            <a href="mailto:beyondweddingss@gmail.com">beyondweddingss@gmail.com</a>
             <Link href="/gallery" className="mt-4 px-4 py-2 border border-white/20 text-white text-[10px] tracking-[2px] uppercase hover:bg-white hover:text-black transition-colors" onClick={() => setIsOpen(false)}>
               Client Portal
             </Link>
