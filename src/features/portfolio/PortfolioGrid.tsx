@@ -29,8 +29,12 @@ const projectsData: Project[] = [
   {
     id: 2,
     title: 'Xhenisha & Erald',
-    cover: '/images/2/a.jpg',
-    images: ['/images/2/a.jpg', '/images/2/b.jpg', '/images/2/c.jpg', '/images/2/d.jpg']
+    cover: '/images/6/aa.jpg',
+    images: [
+      '/images/6/aa.jpg', '/images/6/b.jpg', '/images/6/c.jpg', '/images/6/d.jpg',
+      '/images/6/e.jpg', '/images/6/f.jpg', '/images/6/g.jpg', '/images/6/h.jpg',
+      '/images/6/i.jpg'
+    ]
   },
   {
     id: 3,
@@ -44,8 +48,12 @@ const projectsData: Project[] = [
   {
     id: 4,
     title: 'Elena & Andrea',
-    cover: '/images/4/a.JPEG',
-    images: ['/images/4/a.JPEG', '/images/4/b.JPEG', '/images/4/c.JPEG', '/images/4/d.JPEG']
+    cover: '/images/5/a.jpg',
+    images: [
+      '/images/5/a.jpg', '/images/5/aa.jpg', '/images/5/b.jpg', '/images/5/c.jpg',
+      '/images/5/d.jpg', '/images/5/e.jpg', '/images/5/f.jpg', '/images/5/g.jpg',
+      '/images/5/h.jpg', '/images/5/i.jpg', '/images/5/j.jpg', '/images/5/k.jpg'
+    ]
   }
 ];
 
@@ -137,13 +145,15 @@ export default function PortfolioGrid({ onOpenProject, limit }: PortfolioGridPro
               onOpenProject(item.project);
             }}
             className={`grid-item ${item.visible ? 'visible' : ''}`}
+            style={{ transform: 'translateZ(0)', willChange: 'transform, opacity' }}
             role="listitem"
           >
-            <div className="img-container rounded-2xl">
+            <div className="img-container rounded-2xl" style={{ transform: 'translateZ(0)' }}>
               <img
                 src={item.project.cover}
                 alt={`${item.project.title} Wedding Shoot`}
                 className="w-full h-full object-cover transition-transform duration-700 hover:scale-[1.035]"
+                style={{ transform: 'translateZ(0)', willChange: 'transform' }}
                 loading="lazy"
                 decoding="async"
               />
@@ -166,13 +176,15 @@ export default function PortfolioGrid({ onOpenProject, limit }: PortfolioGridPro
               onOpenProject(item.project);
             }}
             className={`grid-item ${item.visible ? 'visible' : ''}`}
+            style={{ transform: 'translateZ(0)', willChange: 'transform, opacity' }}
             role="listitem"
           >
-            <div className="img-container rounded-2xl">
+            <div className="img-container rounded-2xl" style={{ transform: 'translateZ(0)' }}>
               <img
                 src={item.project.cover}
                 alt={`${item.project.title} Wedding Shoot`}
                 className="w-full h-full object-cover transition-transform duration-700 hover:scale-[1.035]"
+                style={{ transform: 'translateZ(0)', willChange: 'transform' }}
                 loading="lazy"
                 decoding="async"
               />
@@ -195,13 +207,15 @@ export default function PortfolioGrid({ onOpenProject, limit }: PortfolioGridPro
               onOpenProject(item.project);
             }}
             className={`grid-item ${item.visible ? 'visible' : ''}`}
+            style={{ transform: 'translateZ(0)', willChange: 'transform, opacity' }}
             role="listitem"
           >
-            <div className="img-container rounded-2xl">
+            <div className="img-container rounded-2xl" style={{ transform: 'translateZ(0)' }}>
               <img
                 src={item.project.cover}
                 alt={`${item.project.title} Wedding Shoot`}
                 className="w-full h-full object-cover transition-transform duration-700 hover:scale-[1.035]"
+                style={{ transform: 'translateZ(0)', willChange: 'transform' }}
                 loading="lazy"
                 decoding="async"
               />
