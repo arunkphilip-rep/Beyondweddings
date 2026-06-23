@@ -28,16 +28,28 @@ export default function StackingGallery({ project, onClose }: StackingGalleryPro
   const maxScrollRef = useRef(0);
 
   useEffect(() => {
+    const lenis = (window as any).lenisInstance;
     if (project) {
       setRenderedImages(project.images);
       setIsOpen(true);
       scrollPosRef.current = 0;
       targetPosRef.current = 0;
       document.body.classList.add('project-view-open');
+      if (lenis) {
+        lenis.stop();
+      }
     } else {
       setIsOpen(false);
       document.body.classList.remove('project-view-open');
+      if (lenis) {
+        lenis.start();
+      }
     }
+    return () => {
+      if (lenis) {
+        lenis.start();
+      }
+    };
   }, [project]);
 
   useEffect(() => {
@@ -49,9 +61,13 @@ export default function StackingGallery({ project, onClose }: StackingGalleryPro
 
     let isActive = true;
     const movementSpeed = 0.45;
+    let lastTime = performance.now();
     
-    const updateGalleryEngine = () => {
+    const updateGalleryEngine = (now: number) => {
       if (!isActive) return;
+
+      const dt = Math.min(33, now - lastTime) / 16.666; // Normalize to 60fps frame time (16.66ms)
+      lastTime = now;
 
       const windowWidth = viewport.offsetWidth;
       const centerPoint = windowWidth / 2;
@@ -78,12 +94,14 @@ export default function StackingGallery({ project, onClose }: StackingGalleryPro
       targetPosRef.current = Math.max(0, Math.min(maxScroll, targetPosRef.current));
       scrollPosRef.current = Math.max(0, Math.min(maxScroll, scrollPosRef.current));
 
-      // Easing calculation for smooth acceleration/deceleration (60Hz to 144Hz support)
-      scrollPosRef.current += (targetPosRef.current - scrollPosRef.current) * 0.08;
+      // Delta time based easing adjustment for high refresh rates (60Hz / 90Hz / 120Hz / 144Hz)
+      const lerpFactor = 1 - Math.pow(1 - 0.08, dt);
+      scrollPosRef.current += (targetPosRef.current - scrollPosRef.current) * lerpFactor;
 
-      // Apply horizontal slide translation
+      // Apply horizontal slide translation with GPU hardware acceleration
       const trackOffset = -(scrollPosRef.current * movementSpeed);
-      track.style.transform = `translateX(${trackOffset}px)`;
+      track.style.transform = `translateX(${trackOffset}px) translateZ(0)`;
+      track.style.willChange = 'transform';
 
       allCards.forEach((card) => {
         const rect = card.getBoundingClientRect();
@@ -99,34 +117,45 @@ export default function StackingGallery({ project, onClose }: StackingGalleryPro
           card.classList.remove('is-focused');
         }
 
-        // Apply scale & side compression translations
+        // Apply scale & side compression translations with GPU hardware acceleration
         const compression = (centerPoint - cardCenter) * 0.08;
+        card.style.willChange = 'transform';
         if (isFocused) {
-          card.style.transform = `scale(1.12) translateX(${compression}px)`;
+          card.style.transform = `scale(1.12) translateX(${compression}px) translateZ(0)`;
         } else {
-          card.style.transform = `translateX(${compression}px)`;
+          card.style.transform = `translateX(${compression}px) translateZ(0)`;
         }
       });
 
       animationFrameIdRef.current = requestAnimationFrame(updateGalleryEngine);
     };
 
-    animationFrameIdRef.current = requestAnimationFrame(updateGalleryEngine);
+    animationFrameIdRef.current = requestAnimationFrame((now) => {
+      lastTime = now;
+      updateGalleryEngine(now);
+    });
 
-    // Event listener for wheel interactions
+    // Event listener for wheel interactions (both vertical and horizontal axes)
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
-      targetPosRef.current = Math.max(0, Math.min(maxScrollRef.current, targetPosRef.current + e.deltaY * 0.55));
+      const scrollDelta = e.deltaX + e.deltaY;
+      targetPosRef.current = Math.max(0, Math.min(maxScrollRef.current, targetPosRef.current + scrollDelta * 0.55));
     };
 
-    // Event listeners for mobile swipe interactions
+    // Event listeners for mobile swipe interactions (both axes)
+    let touchStartX = 0;
     let touchStartY = 0;
     const handleTouchStart = (e: TouchEvent) => {
+      touchStartX = e.touches[0].clientX;
       touchStartY = e.touches[0].clientY;
     };
     const handleTouchMove = (e: TouchEvent) => {
-      const diff = touchStartY - e.touches[0].clientY;
+      const diffX = touchStartX - e.touches[0].clientX;
+      const diffY = touchStartY - e.touches[0].clientY;
+      touchStartX = e.touches[0].clientX;
       touchStartY = e.touches[0].clientY;
+      
+      const diff = Math.abs(diffX) > Math.abs(diffY) ? diffX : diffY;
       targetPosRef.current = Math.max(0, Math.min(maxScrollRef.current, targetPosRef.current + diff * 1.5));
     };
 
@@ -149,6 +178,10 @@ export default function StackingGallery({ project, onClose }: StackingGalleryPro
   const handleClose = () => {
     setIsOpen(false);
     document.body.classList.remove('project-view-open');
+    const lenis = (window as any).lenisInstance;
+    if (lenis) {
+      lenis.start();
+    }
     setTimeout(() => {
       onClose();
     }, 500); // Wait for fade-out css transition
