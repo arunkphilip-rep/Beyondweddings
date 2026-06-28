@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
-import { Calendar, MapPin, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { galleryService } from '../../src/lib/services';
 import { Gallery } from '../../src/types';
 
@@ -246,30 +246,6 @@ export default function GalleryList() {
                       {gallery.gallery_name}
                     </h2>
 
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, alignItems: 'center' }}>
-                      {gallery.event_date && (
-                        <span style={{
-                          display: 'inline-flex', alignItems: 'center', gap: 5,
-                          fontFamily: 'var(--font-sans)', fontSize: '0.55rem', fontWeight: 400,
-                          letterSpacing: '1.5px', textTransform: 'uppercase',
-                          color: 'rgba(255,255,255,0.5)',
-                        }}>
-                          <Calendar size={10} style={{ color: 'var(--color-accent)' }} />
-                          {new Date(gallery.event_date).toLocaleDateString('en-US', { dateStyle: 'long' })}
-                        </span>
-                      )}
-                      {gallery.venue && (
-                        <span style={{
-                          display: 'inline-flex', alignItems: 'center', gap: 5,
-                          fontFamily: 'var(--font-sans)', fontSize: '0.55rem', fontWeight: 400,
-                          letterSpacing: '1.5px', textTransform: 'uppercase',
-                          color: 'rgba(255,255,255,0.5)',
-                        }}>
-                          <MapPin size={10} style={{ color: 'var(--color-accent)' }} />
-                          {gallery.venue}
-                        </span>
-                      )}
-                    </div>
 
                     {/* Explore CTA */}
                     <div style={{

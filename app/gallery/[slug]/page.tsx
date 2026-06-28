@@ -6,7 +6,7 @@ import { galleryService } from '../../../src/lib/services';
 import { Gallery, GalleryImage } from '../../../src/types';
 import {
   Download, ChevronLeft, ChevronRight, X,
-  ArrowLeft, Calendar, MapPin, ZoomIn, ChevronDown,
+  ArrowLeft, ZoomIn, ChevronDown,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -169,25 +169,7 @@ export default function GalleryView() {
 
           {/* Centre content */}
           <div className="gal-hero-content">
-            <p className="gal-hero-label">Private Collection</p>
             <h1 className="gal-hero-title">{gallery.gallery_name}</h1>
-            <div className="gal-hero-meta">
-              {gallery.event_date && (
-                <span className="gal-hero-meta-item">
-                  <Calendar size={11} />
-                  {new Date(gallery.event_date).toLocaleDateString('en-US', { dateStyle: 'long' })}
-                </span>
-              )}
-              {gallery.venue && (
-                <span className="gal-hero-meta-item">
-                  <MapPin size={11} />
-                  {gallery.venue}
-                </span>
-              )}
-              <span className="gal-hero-meta-item">
-                {images.length} Photographs
-              </span>
-            </div>
           </div>
 
           {/* Scroll cue */}
@@ -297,7 +279,7 @@ export default function GalleryView() {
 
           {/* ── Caption ── */}
           <div className="gal-lb-caption" onClick={e => e.stopPropagation()}>
-            {gallery.gallery_name} &mdash; {gallery.venue || ''}
+            {gallery.gallery_name}
           </div>
 
           {/* ── Filmstrip ── */}
