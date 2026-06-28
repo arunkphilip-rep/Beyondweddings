@@ -40,23 +40,25 @@ export default function Home() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Hero slideshow images for PC/Desktop (landscape aspect ratio)
-  const desktopHeroImages = [
-    '/images/bibin-anju/aa.jpg',
-    '/images/mathew-haritha/a.jpg',
-    '/images/johney-jaisy/aa.jpg',
-    '/images/sobin-ditty/a.JPEG'
+  // Hero slideshow config (manually set your preferred desktop and mobile image paths here)
+  const heroSlides = [
+    {
+      desktop: '/images/bibin-anju/aa.jpg',
+      mobile: '/images/bibin-anju/aa.jpg' // Place your portrait crop path here
+    },
+    {
+      desktop: '/images/mathew-haritha/a.jpg',
+      mobile: '/images/mathew-haritha/a.jpg'
+    },
+    {
+      desktop: '/images/johney-jaisy/aa.jpg',
+      mobile: '/images/johney-jaisy/aa.jpg'
+    },
+    {
+      desktop: '/images/sobin-ditty/a.JPEG',
+      mobile: '/images/sobin-ditty/a.JPEG'
+    }
   ];
-
-  // Hero slideshow images for Phone/Mobile (portrait aspect ratio)
-  const mobileHeroImages = [
-    '/images/bibin-anju/aa.jpg', // Replace these placeholder elements with your vertical mobile crop images
-    '/images/mathew-haritha/a.jpg',
-    '/images/johney-jaisy/aa.jpg',
-    '/images/sobin-ditty/a.JPEG'
-  ];
-
-  const heroImages = isMobile ? mobileHeroImages : desktopHeroImages;
 
   // Testimonials data
   const testimonials = [
@@ -87,7 +89,7 @@ export default function Home() {
 
     // 2. Hero Slideshow rotation loop (2.5s interval)
     const slideshowTimer = setInterval(() => {
-      setHeroSlide((prev) => (prev + 1) % heroImages.length);
+      setHeroSlide((prev) => (prev + 1) % heroSlides.length);
     }, 2500);
 
     // 3. Testimonials auto-advance loop (5s interval)
@@ -100,7 +102,7 @@ export default function Home() {
       clearInterval(slideshowTimer);
       clearInterval(testimonialsTimer);
     };
-  }, [heroImages.length]);
+  }, [heroSlides.length]);
 
   // 4. Stats Counter IntersectionObserver & Animation Frame Loop
   useEffect(() => {
@@ -179,11 +181,11 @@ export default function Home() {
           {/* ======== HERO / HOME SECTION ======== */}
           <section id="home" className="hero-section">
             <div className="hero-slideshow">
-              {heroImages.map((src, index) => (
+              {heroSlides.map((slide, index) => (
                 <div
-                  key={src}
+                  key={index}
                   className={`hero-slide ${index === heroSlide ? 'active' : ''}`}
-                  style={{ backgroundImage: `url('${src}')` }}
+                  style={{ backgroundImage: `url('${isMobile ? slide.mobile : slide.desktop}')` }}
                 />
               ))}
             </div>

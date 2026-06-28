@@ -9,21 +9,7 @@ import {
   ArrowLeft, ZoomIn, ChevronDown,
 } from 'lucide-react';
 import Link from 'next/link';
-const GALLERY_COVER_OVERRIDES: Record<string, { desktop: string; mobile: string }> = {
-  "arun-rosmin": {
-    desktop: "/images/arun-rosmin/desktop-cover.jpg",
-    mobile: "/images/arun-rosmin/mobile-cover.jpg"
-  },
-  "bibin-anju": {
-    desktop: "/images/bibin-anju/aa.jpg",
-    mobile: "/images/bibin-anju/a.jpg"
-  },
-  // Placeholders for your other galleries:
-  "placeholder-slug": {
-    desktop: "/images/placeholder-desktop.jpg",
-    mobile: "/images/placeholder-mobile.jpg"
-  }
-};
+
 
 const cachedDynamicGalleries: Record<string, { gallery: Gallery; images: GalleryImage[] }> = {};
 
@@ -35,7 +21,6 @@ export default function GalleryView() {
   const params  = useParams();
   const slug    = params.slug as string;
 
-  const [isMobile,         setIsMobile]         = useState(false);
   const [loading,          setLoading]          = useState(!cachedDynamicGalleries[slug]);
   const [gallery,          setGallery]          = useState<Gallery | null>(cachedDynamicGalleries[slug]?.gallery || null);
   const [images,           setImages]           = useState<GalleryImage[]>(cachedDynamicGalleries[slug]?.images || []);
@@ -44,13 +29,6 @@ export default function GalleryView() {
   const [lightboxClosing,  setLightboxClosing]  = useState(false);
   const [coverLoaded,      setCoverLoaded]      = useState(false);
   const thumbRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile, { passive: true });
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   /* ── Data ── */
   useEffect(() => {
@@ -150,14 +128,6 @@ export default function GalleryView() {
 
   if (!gallery) return null;
 
-  // Resolve cover image: check manual override config first, fall back to gallery record or first image
-  const getCoverImage = () => {
-    const override = GALLERY_COVER_OVERRIDES[slug];
-    if (override) {
-      return isMobile ? override.mobile : override.desktop;
-    }
-    return gallery?.cover_image || images[0]?.image_url || '/images/bibin-anju/a.jpg';
-  };
 
   /* ── 3-col distribution ── */
   const col1 = images.filter((_, i) => i % 3 === 0);
@@ -185,7 +155,7 @@ export default function GalleryView() {
           {/* Cover image */}
           <div className="gal-hero-bg">
             <img
-              src={getCoverImage()}
+              src={gallery.cover_image || images[0]?.image_url || '/images/bibin-anju/a.jpg'}
               alt={gallery.gallery_name}
               className={`gal-hero-bg-img ${coverLoaded ? 'gal-hero-bg-img--loaded' : ''}`}
               onLoad={() => setCoverLoaded(true)}
