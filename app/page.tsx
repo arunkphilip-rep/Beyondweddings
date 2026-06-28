@@ -55,8 +55,8 @@ export default function Home() {
       mobile: '/images/johney-jaisy/a.jpg'
     },
     {
-      desktop: '/images/sobin-ditty/a.JPEG',
-      mobile: '/images/arun-rosmin/aa.jpg'
+      desktop: '/images/arun-rosmin/d.jpg',
+      mobile: '/images/arun-rosmin/aa.jpeg'
     }
   ];
 
