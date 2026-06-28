@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { galleryService } from '../../../src/lib/services';
 import { Gallery, GalleryImage } from '../../../src/types';
 import {
-  Download, ChevronLeft, ChevronRight, X,
+  ChevronLeft, ChevronRight, X,
   ArrowLeft, ZoomIn, ChevronDown,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -99,18 +99,6 @@ export default function GalleryView() {
     }
   }, [lightboxIndex]);
 
-  /* ── Download ── */
-  const handleDownload = async (url: string, name: string) => {
-    try {
-      const blob = await fetch(url).then(r => r.blob());
-      const a = Object.assign(document.createElement('a'), {
-        href: URL.createObjectURL(blob), download: name,
-      });
-      document.body.appendChild(a); a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(a.href);
-    } catch { window.open(url, '_blank'); }
-  };
 
   /* ── Scroll to grid ── */
   const scrollToGrid = () => {
@@ -197,22 +185,19 @@ export default function GalleryView() {
               <div className="gal-col">
                 {col1.map(img => (
                   <GalleryCard key={img.id} img={img} idx={images.indexOf(img)}
-                    onOpen={() => openLightbox(images.indexOf(img))}
-                    onDownload={() => handleDownload(img.image_url, img.file_name)} />
+                    onOpen={() => openLightbox(images.indexOf(img))} />
                 ))}
               </div>
               <div className="gal-col gal-col--mid">
                 {col2.map(img => (
                   <GalleryCard key={img.id} img={img} idx={images.indexOf(img)}
-                    onOpen={() => openLightbox(images.indexOf(img))}
-                    onDownload={() => handleDownload(img.image_url, img.file_name)} />
+                    onOpen={() => openLightbox(images.indexOf(img))} />
                 ))}
               </div>
               <div className="gal-col gal-col--late">
                 {col3.map(img => (
                   <GalleryCard key={img.id} img={img} idx={images.indexOf(img)}
-                    onOpen={() => openLightbox(images.indexOf(img))}
-                    onDownload={() => handleDownload(img.image_url, img.file_name)} />
+                    onOpen={() => openLightbox(images.indexOf(img))} />
                 ))}
               </div>
             </div>
@@ -240,12 +225,7 @@ export default function GalleryView() {
         >
           {/* ── Top bar ── */}
           <div className="gal-lb-bar" onClick={e => e.stopPropagation()}>
-            <button
-              className="gal-lb-pill"
-              onClick={() => handleDownload(images[lightboxIndex].image_url, images[lightboxIndex].file_name)}
-            >
-              <Download size={13} /> <span>Download</span>
-            </button>
+            <div className="w-[38px]" /> {/* Spacer to keep count centered */}
 
             <div className="gal-lb-count">
               <span className="gal-lb-count-cur">{String(lightboxIndex + 1).padStart(2, '0')}</span>
@@ -311,10 +291,10 @@ export default function GalleryView() {
    Gallery Card
 ───────────────────────────────────────────────────── */
 function GalleryCard({
-  img, idx, onOpen, onDownload,
+  img, idx, onOpen,
 }: {
   img: GalleryImage; idx: number;
-  onOpen: () => void; onDownload: () => void;
+  onOpen: () => void;
 }) {
   const [loaded, setLoaded] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -350,13 +330,6 @@ function GalleryCard({
         <div className="gal-card-ov">
           <ZoomIn size={22} className="gal-card-zoom" />
         </div>
-        <button
-          className="gal-card-dl"
-          onClick={e => { e.stopPropagation(); onDownload(); }}
-          aria-label="Download"
-        >
-          <Download size={12} />
-        </button>
       </div>
     </div>
   );

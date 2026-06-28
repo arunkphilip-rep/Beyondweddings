@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { X, ChevronLeft, ChevronRight, Download } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface Project {
   id: string | number;
@@ -82,30 +82,9 @@ export default function StackingGallery({ project, onClose }: StackingGalleryPro
     setTimeout(tryUnlock, ANIM_MS);
   }, [getTargetXForIndex, ANIM_MS, IDLE_MS]);
 
-  // Click handler: if clicking centered card, open lightbox; else, snap-to
+  // Click handler: immediately open the fullscreen lightbox
   const handleCardClick = (idx: number) => {
-    if (idx === currentIndex) {
-      setLightboxIndex(idx);
-    } else {
-      snapToIndex(idx, renderedImages.length);
-    }
-  };
-
-  const handleDownload = async (imgUrl: string, fileName: string) => {
-    try {
-      const response = await fetch(imgUrl);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      window.open(imgUrl, '_blank');
-    }
+    setLightboxIndex(idx);
   };
 
   // Keyboard navigation & Close support
@@ -431,17 +410,7 @@ export default function StackingGallery({ project, onClose }: StackingGalleryPro
             <X size={18} />
           </button>
 
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleDownload(renderedImages[lightboxIndex], `${project.title}-${lightboxIndex + 1}.jpg`);
-            }}
-            className="absolute top-6 left-6 text-white/70 hover:text-white flex items-center gap-1.5 text-[10px] tracking-[2px] uppercase bg-white/10 px-4 py-2 rounded-full backdrop-blur-md transition-all hover:bg-white hover:text-black"
-            aria-label="Download Image"
-          >
-            <Download size={12} />
-            <span>Download</span>
-          </button>
+
 
           <button
             onClick={(e) => {
