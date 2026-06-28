@@ -435,13 +435,13 @@ export default function StackingGallery({ project, onClose }: StackingGalleryPro
           </button>
 
           <div 
-            className="max-w-[85vw] max-h-[75vh] relative flex items-center justify-center"
+            className="max-w-[95vw] max-h-[90vh] md:max-h-[94vh] relative flex items-center justify-center"
             onClick={(e) => e.stopPropagation()}
           >
             <img
               src={renderedImages[lightboxIndex]}
               alt={`${project.title} Lightbox Frame`}
-              className="max-w-full max-h-[75vh] object-contain rounded shadow-2xl animate-fade-in"
+              className="max-w-full max-h-[90vh] md:max-h-[94vh] object-contain rounded shadow-2xl animate-fade-in"
             />
           </div>
 

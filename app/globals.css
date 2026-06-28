@@ -798,7 +798,7 @@ body.menu-open .bar-2 { transform: translateY(-5px) rotate(-45deg); }
 }
 
 .pg-item:hover .pg-img,
-.pg-item:focus-visible .pg-img { transform: scale(1.04); }
+.pg-item:focus-visible .pg-img { transform: none; }
 
 /* Hover overlay */
 .pg-overlay {
@@ -1692,7 +1692,7 @@ body.project-view-open .header { display: none !important; }
 .gal-card-inner {
   position: relative;
   overflow: hidden;
-  cursor: zoom-in;
+  cursor: pointer;
   background: #131110;
   /* GPU */
   transform: translateZ(0);
@@ -1702,7 +1702,7 @@ body.project-view-open .header { display: none !important; }
     box-shadow 0.5s cubic-bezier(0.215,0.61,0.355,1);
 }
 .gal-card-inner:hover {
-  transform: translateZ(0) scale(1.018);
+  transform: translateZ(0);
   box-shadow: 0 20px 60px rgba(0,0,0,0.55);
   z-index: 2;
 }
@@ -1740,7 +1740,7 @@ body.project-view-open .header { display: none !important; }
 }
 .gal-card-img--on { opacity: 1; transform: scale(1) translateZ(0); }
 .gal-card-inner:hover .gal-card-img {
-  transform: scale(1.07) translateZ(0);
+  transform: scale(1) translateZ(0);
 }
 
 /* Hover overlay */
@@ -2063,8 +2063,21 @@ body.project-view-open .header { display: none !important; }
 }
  
 /* GALLERY LIST - CINEMATIC CARD GRID */ 
-.gal-list-card-inner:hover .gal-list-card-img { transform: scale(1.07) !important; } 
+.gal-list-card-inner:hover .gal-list-card-img { transform: none !important; } 
 .gal-list-card-inner:hover .gal-list-card-cta { color: rgba(255,255,255,0.9) !important; transform: translateX(4px); } 
 @media (max-width: 639px) { 
   .gal-list-card-cta { font-size: 0.5rem !important; } 
+}
+
+/* PC / Desktop Optimization: fit image to screen */
+@media (min-width: 1024px) {
+  .gal-lb {
+    grid-template-rows: 64px 1fr 10px 48px;
+    grid-template-columns: 80px 1fr 80px;
+  }
+  .gal-lb-img {
+    max-height: 94vh !important;
+    max-width: 94vw !important;
+    object-fit: contain;
+  }
 }
