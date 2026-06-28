@@ -29,13 +29,34 @@ export default function Home() {
   const statsSectionRef = useRef<HTMLDivElement>(null);
   const statsAnimated = useRef(false);
 
-  // Hero slideshow images
-  const heroImages = [
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile, { passive: true });
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Hero slideshow images for PC/Desktop (landscape aspect ratio)
+  const desktopHeroImages = [
     '/images/bibin-anju/aa.jpg',
     '/images/mathew-haritha/a.jpg',
     '/images/johney-jaisy/aa.jpg',
     '/images/sobin-ditty/a.JPEG'
   ];
+
+  // Hero slideshow images for Phone/Mobile (portrait aspect ratio)
+  const mobileHeroImages = [
+    '/images/bibin-anju/aa.jpg', // Replace these placeholder elements with your vertical mobile crop images
+    '/images/mathew-haritha/a.jpg',
+    '/images/johney-jaisy/aa.jpg',
+    '/images/sobin-ditty/a.JPEG'
+  ];
+
+  const heroImages = isMobile ? mobileHeroImages : desktopHeroImages;
 
   // Testimonials data
   const testimonials = [
@@ -79,7 +100,7 @@ export default function Home() {
       clearInterval(slideshowTimer);
       clearInterval(testimonialsTimer);
     };
-  }, []);
+  }, [heroImages.length]);
 
   // 4. Stats Counter IntersectionObserver & Animation Frame Loop
   useEffect(() => {
