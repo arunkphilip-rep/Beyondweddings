@@ -44,19 +44,19 @@ export default function Home() {
   const heroSlides = [
     {
       desktop: '/images/bibin-anju/aa.jpg',
-      mobile: '/images/bibin-anju/aa.jpg' // Place your portrait crop path here
+      mobile: '/images/bibin-anju/b.jpg' // Place your portrait crop path here
     },
     {
-      desktop: '/images/mathew-haritha/a.jpg',
-      mobile: '/images/mathew-haritha/a.jpg'
+      desktop: '/images/mathew-haritha/aa.jpg',
+      mobile: '/images/mathew-haritha/c.jpg'
     },
     {
       desktop: '/images/johney-jaisy/aa.jpg',
-      mobile: '/images/johney-jaisy/aa.jpg'
+      mobile: '/images/johney-jaisy/a.jpg'
     },
     {
       desktop: '/images/sobin-ditty/a.JPEG',
-      mobile: '/images/sobin-ditty/a.JPEG'
+      mobile: '/images/arun-rosmin/aa.jpg'
     }
   ];
 
