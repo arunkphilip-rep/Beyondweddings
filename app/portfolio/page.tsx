@@ -9,28 +9,27 @@ interface Project {
   title: string;
   cover: string;
   images: string[];
-  slug: string;
 }
 
 export default function PortfolioPage() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   return (
-    <div className="flex-grow bg-bg min-h-screen pt-48 pb-24 px-6 select-none">
+    <div className="flex-grow bg-bg min-h-screen select-none" style={{ paddingTop: 'clamp(100px, 14vw, 180px)', paddingBottom: 'clamp(48px, 8vw, 96px)' }}>
       <div className="max-w-[1300px] mx-auto">
         
         {/* Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-3xl md:text-4xl font-serif tracking-[3px] uppercase text-text">
+        <div className="text-center" style={{ marginBottom: 'clamp(32px, 5vw, 64px)', padding: '0 clamp(16px, 5vw, 60px)' }}>
+          <h1 className="font-serif tracking-[3px] uppercase text-text" style={{ fontSize: 'clamp(1.6rem, 4vw, 2.8rem)', fontWeight: 300 }}>
             Studio Portfolio
           </h1>
-          <div className="w-12 h-[1px] bg-accent mx-auto mt-4 mb-4" />
-          <p className="text-xs text-text-muted tracking-wide max-w-md mx-auto leading-relaxed">
+          <div className="w-10 h-[1px] bg-accent mx-auto" style={{ marginTop: 16, marginBottom: 16 }} />
+          <p className="text-text-muted tracking-wide max-w-md mx-auto leading-relaxed" style={{ fontSize: 'clamp(0.78rem, 1.2vw, 0.88rem)', fontWeight: 300 }}>
             Explore our curated collections of editorial wedding stories, elopements, and engagement features across the world.
           </p>
         </div>
 
-        {/* Full Infinite Scroll Grid */}
+        {/* Full Portfolio Grid */}
         <PortfolioGrid onOpenProject={(project) => setSelectedProject(project)} />
 
       </div>

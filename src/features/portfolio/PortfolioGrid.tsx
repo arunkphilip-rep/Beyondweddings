@@ -1,14 +1,14 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { galleryService } from '../../lib/services';
 
 export interface Project {
   id: string | number;
   title: string;
+  slug: string;
   cover: string;
   images: string[];
-  slug: string;
 }
 
 interface PortfolioGridProps {
@@ -20,9 +20,19 @@ export default function PortfolioGrid({ onOpenProject, limit }: PortfolioGridPro
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [visibleIds, setVisibleIds] = useState<Record<string, boolean>>({});
+  const [isMobile, setIsMobile] = useState(false);
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  // Detect mobile (≤ 639px = 2-col layout)
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 639);
+    check();
+    window.addEventListener('resize', check, { passive: true });
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   useEffect(() => {
-    const loadPortfolioData = async () => {
+    const load = async () => {
       try {
         const galleries = await galleryService.getAllGalleries();
         const items = await Promise.all(
@@ -31,142 +41,121 @@ export default function PortfolioGrid({ onOpenProject, limit }: PortfolioGridPro
             return {
               id: g.id,
               title: g.gallery_name,
+              slug: g.slug,
               cover: g.cover_image || '/images/bibin-anju/a.jpg',
               images: imgs.map((img) => img.image_url),
-              slug: g.slug,
             };
           })
         );
         setProjects(items);
       } catch (err) {
-        console.error('Failed to load portfolio galleries:', err);
+        console.error('Failed to load portfolio:', err);
       } finally {
         setLoading(false);
       }
     };
-    loadPortfolioData();
+    load();
   }, []);
 
+  // IntersectionObserver — stagger each card into view
   useEffect(() => {
     if (projects.length === 0) return;
-    
-    // Animate visibility sequentially for a clean entry transition
-    projects.forEach((proj, index) => {
-      setTimeout(() => {
-        setVisibleIds((prev) => ({ ...prev, [proj.id]: true }));
-      }, index * 80);
-    });
-  }, [projects]);
+    const items = gridRef.current?.querySelectorAll('.pg-item');
+    if (!items) return;
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const el = entry.target as HTMLElement;
+            const id = el.dataset.id as string;
+            setVisibleIds((prev) => ({ ...prev, [id]: true }));
+            obs.unobserve(el);
+          }
+        });
+      },
+      { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+    );
+
+    items.forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  }, [projects, isMobile]);
 
   if (loading) {
     return (
       <div className="flex justify-center items-center py-20 min-h-[300px]">
-        <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+        <div className="w-5 h-5 border-2 border-[#B08D57] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
-  // Display only up to limit if specified
   const activeProjects = limit ? projects.slice(0, limit) : projects;
 
-  // Split items into 3 columns
-  const col1 = activeProjects.filter((_, idx) => idx % 3 === 0);
-  const col2 = activeProjects.filter((_, idx) => idx % 3 === 1);
-  const col3 = activeProjects.filter((_, idx) => idx % 3 === 2);
+  const renderItem = (item: Project, delay: number) => (
+    <button
+      key={item.id}
+      data-id={String(item.id)}
+      className={`pg-item group ${visibleIds[item.id] ? 'pg-item--visible' : ''}`}
+      style={{ transitionDelay: `${delay}ms` }}
+      onClick={() => onOpenProject(item)}
+      aria-label={`Open ${item.title} gallery`}
+    >
+      <div className="pg-img-wrap">
+        <img
+          src={item.cover}
+          alt={`${item.title} Wedding`}
+          loading="lazy"
+          decoding="async"
+          className="pg-img"
+        />
+        {/* Hover overlay */}
+        <div className="pg-overlay">
+          <span className="pg-overlay-text">VIEW STORY</span>
+        </div>
+      </div>
+      <div className="pg-info">
+        <span className="pg-title">{item.title}</span>
+        <span className="pg-arrow">→</span>
+      </div>
+    </button>
+  );
+
+  // ── Mobile: 2-column layout — distribute ALL items evenly ──
+  if (isMobile) {
+    const col1 = activeProjects.filter((_, i) => i % 2 === 0);
+    const col2 = activeProjects.filter((_, i) => i % 2 === 1);
+    return (
+      <div className="pg-grid" ref={gridRef}>
+        <div className="pg-col pg-col--1">
+          {col1.map((item, i) => renderItem(item, i * 60))}
+        </div>
+        <div className="pg-col pg-col--2">
+          {col2.map((item, i) => renderItem(item, i * 60 + 80))}
+        </div>
+      </div>
+    );
+  }
+
+  // ── Desktop: 3-column geometric stagger layout ──
+  const col1 = activeProjects.filter((_, i) => i % 3 === 0);
+  const col2 = activeProjects.filter((_, i) => i % 3 === 1);
+  const col3 = activeProjects.filter((_, i) => i % 3 === 2);
 
   return (
-    <div className="grid-container select-none px-4 md:px-10 pb-10">
-      {/* Column 1 */}
-      <div className="grid-col col-1">
-        {col1.map((item) => (
-          <a
-            key={item.id}
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              onOpenProject(item);
-            }}
-            className={`grid-item ${visibleIds[item.id] ? 'visible' : ''}`}
-            style={{ transform: 'translateZ(0)', willChange: 'transform, opacity' }}
-            role="listitem"
-          >
-            <div className="img-container rounded-2xl" style={{ transform: 'translateZ(0)' }}>
-              <img
-                src={item.cover}
-                alt={`${item.title} Wedding Shoot`}
-                className="w-full h-full object-cover transition-transform duration-700 hover:scale-[1.035]"
-                style={{ transform: 'translateZ(0)', willChange: 'transform' }}
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-            <div className="item-info mt-3 pl-1 mb-2 order-first">
-              <h2 className="item-title text-sm uppercase tracking-[2px] font-medium">{item.title}</h2>
-            </div>
-          </a>
-        ))}
+    <div className="pg-grid" ref={gridRef}>
+      {/* Column 1 — starts at top */}
+      <div className="pg-col pg-col--1">
+        {col1.map((item, i) => renderItem(item, i * 60))}
       </div>
 
-      {/* Column 2 - Staggered down */}
-      <div className="grid-col col-2 mt-0 md:mt-20">
-        {col2.map((item) => (
-          <a
-            key={item.id}
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              onOpenProject(item);
-            }}
-            className={`grid-item ${visibleIds[item.id] ? 'visible' : ''}`}
-            style={{ transform: 'translateZ(0)', willChange: 'transform, opacity' }}
-            role="listitem"
-          >
-            <div className="img-container rounded-2xl" style={{ transform: 'translateZ(0)' }}>
-              <img
-                src={item.cover}
-                alt={`${item.title} Wedding Shoot`}
-                className="w-full h-full object-cover transition-transform duration-700 hover:scale-[1.035]"
-                style={{ transform: 'translateZ(0)', willChange: 'transform' }}
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-            <div className="item-info mt-3 pl-1 mb-2 order-first">
-              <h2 className="item-title text-sm uppercase tracking-[2px] font-medium">{item.title}</h2>
-            </div>
-          </a>
-        ))}
+      {/* Column 2 — offset down by ~100px via CSS */}
+      <div className="pg-col pg-col--2">
+        {col2.map((item, i) => renderItem(item, i * 60 + 120))}
       </div>
 
-      {/* Column 3 - Staggered further down */}
-      <div className="grid-col col-3 mt-0 md:mt-40">
-        {col3.map((item) => (
-          <a
-            key={item.id}
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              onOpenProject(item);
-            }}
-            className={`grid-item ${visibleIds[item.id] ? 'visible' : ''}`}
-            style={{ transform: 'translateZ(0)', willChange: 'transform, opacity' }}
-            role="listitem"
-          >
-            <div className="img-container rounded-2xl" style={{ transform: 'translateZ(0)' }}>
-              <img
-                src={item.cover}
-                alt={`${item.title} Wedding Shoot`}
-                className="w-full h-full object-cover transition-transform duration-700 hover:scale-[1.035]"
-                style={{ transform: 'translateZ(0)', willChange: 'transform' }}
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-            <div className="item-info mt-3 pl-1 mb-2 order-first">
-              <h2 className="item-title text-sm uppercase tracking-[2px] font-medium">{item.title}</h2>
-            </div>
-          </a>
-        ))}
+      {/* Column 3 — offset down by ~200px via CSS */}
+      <div className="pg-col pg-col--3">
+        {col3.map((item, i) => renderItem(item, i * 60 + 240))}
       </div>
     </div>
   );

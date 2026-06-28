@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
-import { Calendar, MapPin, ArrowRight, ChevronDown } from 'lucide-react';
+import { Calendar, MapPin, ArrowRight } from 'lucide-react';
 import { galleryService } from '../../src/lib/services';
 import { Gallery } from '../../src/types';
 
@@ -26,154 +26,263 @@ export default function GalleryList() {
     fetchGalleries();
   }, []);
 
+  // IntersectionObserver — stagger each card
   useEffect(() => {
-    if (loading || galleries.length === 0) return;
+    if (galleries.length === 0) return;
+    const items = gridRef.current?.querySelectorAll('.gal-list-card');
+    if (!items) return;
 
-    const observer = new IntersectionObserver(
+    const obs = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            const id = entry.target.getAttribute('data-id');
-            if (id) {
-              setVisibleIds((prev) => ({ ...prev, [id]: true }));
-            }
-            observer.unobserve(entry.target);
+            const el = entry.target as HTMLElement;
+            const id = el.dataset.id as string;
+            setVisibleIds((prev) => ({ ...prev, [id]: true }));
+            obs.unobserve(el);
           }
         });
       },
-      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+      { threshold: 0.08, rootMargin: '0px 0px -60px 0px' }
     );
 
-    const cards = document.querySelectorAll('.gal-list-card');
-    cards.forEach((card) => observer.observe(card));
-
-    return () => observer.disconnect();
-  }, [loading, galleries]);
+    items.forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  }, [galleries]);
 
   if (loading) {
     return (
-      <div className="flex-grow flex items-center justify-center bg-[#0A0908] min-h-screen">
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-[10px] tracking-[2px] uppercase text-zinc-500">Loading client galleries...</p>
-        </div>
+      <div style={{
+        position: 'fixed', inset: 0, display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center', gap: 20,
+        background: '#080706', color: 'rgba(255,255,255,0.45)',
+        fontFamily: 'var(--font-sans)', fontSize: '0.66rem',
+        letterSpacing: '3px', textTransform: 'uppercase', zIndex: 9990,
+      }}>
+        <div style={{
+          width: 32, height: 32,
+          border: '1.5px solid rgba(255,255,255,0.12)',
+          borderTopColor: 'rgba(255,255,255,0.7)',
+          borderRadius: '50%',
+          animation: 'galSpin 0.75s linear infinite',
+        }} />
+        <p>Loading galleries…</p>
       </div>
     );
   }
 
-  // Get the first gallery cover for hero background
-  const heroBg = galleries[0]?.cover_image || '/images/bibin-anju/a.jpg';
-
-  const handleScrollToGrid = () => {
-    if (gridRef.current) {
-      const lenis = (window as any).lenisInstance;
-      if (lenis) {
-        lenis.scrollTo(gridRef.current);
-      } else {
-        gridRef.current.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-  };
-
   return (
-    <div className="flex-grow bg-[#0A0908] text-white min-h-screen select-none">
-      {/* Cinematic Hero Section */}
-      <section className="relative h-[90vh] min-h-[600px] w-full flex items-center justify-center overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center transition-transform duration-10000 ease-out scale-105"
-          style={{ 
-            backgroundImage: `url('${heroBg}')`,
-            animation: 'heroPan 20s ease-in-out infinite alternate',
-            willChange: 'transform'
-          }}
-        />
-        {/* Sleek Gradient Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0908] via-black/45 to-black/30" />
-        <div className="absolute inset-0 bg-black/20" />
+    <div className="gal-canvas select-none" style={{ minHeight: '100dvh', background: '#0A0908' }}>
+      {/* ══════════════════════════════════════════════════
+          HERO
+      ══════════════════════════════════════════════════ */}
+      <section className="gal-hero" style={{
+        position: 'relative', width: '100%', height: '100dvh', minHeight: 600,
+        overflow: 'hidden', display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+      }}>
+        {/* Background image montage — uses first gallery cover */}
+        <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+          <img
+            src={galleries[0]?.cover_image || '/images/bibin-anju/a.jpg'}
+            alt=""
+            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%' }}
+            draggable={false}
+          />
+        </div>
 
-        <div className="relative z-10 text-center px-6 max-w-2xl mx-auto">
-          <span className="text-[10px] tracking-[4px] uppercase text-accent font-medium mb-3 block animate-fade-in">
+        {/* Gradients */}
+        <div style={{
+          position: 'absolute', top: 0, left: 0, right: 0, height: 260,
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0) 100%)',
+          zIndex: 1, pointerEvents: 'none',
+        }} />
+        <div style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0, height: '70%',
+          background: 'linear-gradient(to top, rgba(0,0,0,0.96) 0%, rgba(0,0,0,0.55) 40%, rgba(0,0,0,0) 100%)',
+          zIndex: 1, pointerEvents: 'none',
+        }} />
+
+        {/* Centre content */}
+        <div className="gal-hero-content" style={{
+          position: 'relative', zIndex: 2, textAlign: 'center',
+          padding: '0 clamp(20px, 6vw, 80px) clamp(80px, 12vh, 140px)', width: '100%',
+        }}>
+          <p className="gal-hero-label" style={{
+            fontFamily: 'var(--font-sans)', fontSize: '0.58rem', fontWeight: 500,
+            letterSpacing: '5px', textTransform: 'uppercase',
+            color: 'var(--color-accent)', marginBottom: 14,
+          }}>
             Client Galleries
-          </span>
-          <h1 className="text-4xl md:text-6xl font-serif tracking-[2px] uppercase mb-4 animate-fade-in-up">
+          </p>
+          <h1 className="gal-hero-title" style={{
+            fontFamily: 'var(--font-serif)', fontSize: 'clamp(2.4rem, 7vw, 6rem)',
+            fontWeight: 300, letterSpacing: 'clamp(0.06em, 1.5vw, 0.22em)',
+            textTransform: 'uppercase', color: '#fff', lineHeight: 1.06,
+            marginBottom: 'clamp(16px, 3vh, 28px)',
+            textShadow: '0 4px 32px rgba(0,0,0,0.4)',
+          }}>
             Wedding Stories
           </h1>
-          <p className="text-xs md:text-sm text-zinc-300 tracking-wide font-light leading-relaxed mb-8 max-w-lg mx-auto">
-            Welcome to your private portal. Select a wedding story below to view, share, and download the full-resolution editorial files.
+          <p style={{
+            fontFamily: 'var(--font-sans)', fontSize: 'clamp(0.58rem, 1vw, 0.7rem)',
+            fontWeight: 400, letterSpacing: '2px', textTransform: 'uppercase',
+            color: 'rgba(255,255,255,0.45)', maxWidth: 500, margin: '0 auto', lineHeight: 1.7,
+          }}>
+            Select a story below to view, share, and download the full-resolution editorial photographs.
           </p>
-          
-          <button 
-            onClick={handleScrollToGrid}
-            className="inline-flex flex-col items-center gap-2 text-[9px] tracking-[3px] uppercase text-zinc-400 hover:text-white transition-colors duration-300 mt-4 cursor-pointer"
-          >
-            <span>Browse Stories</span>
-            <ChevronDown size={14} className="animate-bounce mt-1" />
-          </button>
         </div>
-      </section>
 
-      {/* Gallery Cards Container */}
-      <div 
-        ref={gridRef}
-        className="max-w-[1200px] mx-auto px-6 py-24 scroll-mt-10"
-      >
+        {/* Scroll cue */}
+        <button
+          onClick={() => document.getElementById('gal-list-anchor')?.scrollIntoView({ behavior: 'smooth' })}
+          style={{
+            position: 'absolute', bottom: 'clamp(24px, 5vh, 40px)', left: '50%',
+            transform: 'translateX(-50%)', zIndex: 3, display: 'flex', flexDirection: 'column',
+            alignItems: 'center', gap: 8, color: 'rgba(255,255,255,0.45)',
+            fontFamily: 'var(--font-sans)', fontSize: '0.55rem', letterSpacing: '3px',
+            textTransform: 'uppercase', background: 'none', border: 'none', cursor: 'pointer',
+            whiteSpace: 'nowrap',
+          }}
+          aria-label="Scroll to galleries"
+        >
+          <span>Browse Stories</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ animation: 'galBounce 2s ease-in-out infinite' }}>
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </button>
+      </section>
+      {/* ══════════════════════════════════════════════════
+          GALLERY LIST GRID
+      ══════════════════════════════════════════════════ */}
+      <div id="gal-list-anchor" />
+
+      <section style={{
+        background: '#0A0908',
+        padding: 'clamp(28px, 4vw, 48px) clamp(16px, 3vw, 40px)',
+      }}>
         {galleries.length === 0 ? (
-          <div className="text-center py-20 border border-dashed border-zinc-800 rounded-2xl bg-white/[0.02]">
-            <p className="text-sm text-zinc-500 tracking-wide uppercase">No galleries published yet.</p>
+          <div style={{
+            textAlign: 'center', padding: '80px 20px',
+            color: 'rgba(255,255,255,0.25)', fontFamily: 'var(--font-sans)',
+            fontSize: '0.7rem', letterSpacing: '3px', textTransform: 'uppercase',
+          }}>
+            No galleries published yet.
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14">
+          <div
+            ref={gridRef}
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 420px), 1fr))',
+              gap: 'clamp(16px, 2.5vw, 32px)',
+              maxWidth: 1100,
+              margin: '0 auto',
+            }}
+          >
             {galleries.map((gallery, idx) => (
-              <Link 
-                key={gallery.id} 
+              <Link
+                key={gallery.id}
                 data-id={String(gallery.id)}
                 href={`/gallery/${gallery.slug}`}
-                className="gal-list-card group block"
-                style={{ 
-                  willChange: 'transform, opacity',
+                className="gal-list-card"
+                style={{
+                  display: 'block',
+                  textDecoration: 'none',
                   opacity: visibleIds[gallery.id] ? 1 : 0,
-                  transform: visibleIds[gallery.id] ? 'translateY(0) translateZ(0)' : 'translateY(30px) translateZ(0)',
-                  transition: `opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1) ${idx * 60}ms, transform 0.8s cubic-bezier(0.25, 1, 0.5, 1) ${idx * 60}ms`
+                  transform: visibleIds[gallery.id] ? 'translateY(0)' : 'translateY(40px)',
+                  transition: `opacity 0.7s cubic-bezier(0.215,0.61,0.355,1) ${idx * 80}ms, transform 0.7s cubic-bezier(0.215,0.61,0.355,1) ${idx * 80}ms`,
+                  willChange: 'opacity, transform',
                 }}
               >
-                <div className="gal-list-card-inner aspect-[16/10] w-full overflow-hidden bg-zinc-900 relative rounded-2xl border border-zinc-800/40 shadow-2xl">
-                  {/* Gallery Image */}
-                  <img
-                    src={gallery.cover_image || '/images/bibin-anju/a.jpg'}
-                    alt={gallery.gallery_name}
-                    className="gal-list-card-img w-full h-full object-cover"
-                    style={{ transform: 'translateZ(0)', willChange: 'transform' }}
-                    loading={idx < 2 ? 'eager' : 'lazy'}
-                  />
-                  {/* Gradient bottom overlay for metadata readability */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent transition-opacity duration-500 group-hover:opacity-95" />
+                <div
+                  className="gal-list-card-inner"
+                  style={{
+                    position: 'relative',
+                    overflow: 'hidden',
+                    borderRadius: 6,
+                    background: '#131110',
+                    transform: 'translateZ(0)',
+                    willChange: 'transform',
+                    transition: 'transform 0.5s cubic-bezier(0.215,0.61,0.355,1), box-shadow 0.5s cubic-bezier(0.215,0.61,0.355,1)',
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateZ(0) scale(1.015)'; e.currentTarget.style.boxShadow = '0 24px 64px rgba(0,0,0,0.6)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = 'translateZ(0) scale(1)'; e.currentTarget.style.boxShadow = 'none'; }}
+                >
+                  {/* Image */}
+                  <div style={{ aspectRatio: '16/10', overflow: 'hidden' }}>
+                    <img
+                      src={gallery.cover_image || '/images/bibin-anju/a.jpg'}
+                      alt={gallery.gallery_name}
+                      style={{
+                        width: '100%', height: '100%', objectFit: 'cover',
+                        transition: 'transform 0.75s cubic-bezier(0.215,0.61,0.355,1)',
+                        willChange: 'transform', display: 'block',
+                      }}
+                      className="gal-list-card-img"
+                      loading={idx < 3 ? 'eager' : 'lazy'}
+                      draggable={false}
+                    />
+                  </div>
 
-                  {/* Card Info Overlay */}
-                  <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8 z-10">
-                    <h2 className="text-2xl md:text-3xl font-serif uppercase tracking-[1px] text-white group-hover:text-accent transition-colors duration-300 mb-3">
+                  {/* Overlay gradient */}
+                  <div style={{
+                    position: 'absolute', bottom: 0, left: 0, right: 0, height: '60%',
+                    background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0) 100%)',
+                    pointerEvents: 'none', zIndex: 1,
+                  }} />
+
+                  {/* Content on image */}
+                  <div style={{
+                    position: 'absolute', bottom: 0, left: 0, right: 0,
+                    padding: 'clamp(16px, 3vw, 28px)', zIndex: 2,
+                  }}>
+                    <h2 style={{
+                      fontFamily: 'var(--font-serif)',
+                      fontSize: 'clamp(1.2rem, 2.5vw, 1.6rem)', fontWeight: 300,
+                      letterSpacing: '0.12em', textTransform: 'uppercase', color: '#fff',
+                      marginBottom: 10, textShadow: '0 2px 16px rgba(0,0,0,0.5)',
+                    }}>
                       {gallery.gallery_name}
                     </h2>
-                    
-                    <div className="flex flex-wrap gap-4 text-[10px] text-zinc-400 tracking-wider">
+
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, alignItems: 'center' }}>
                       {gallery.event_date && (
-                        <div className="flex items-center gap-1.5 font-light">
-                          <Calendar size={11} className="text-accent" />
-                          <span>{new Date(gallery.event_date).toLocaleDateString('en-US', { dateStyle: 'long' })}</span>
-                        </div>
+                        <span style={{
+                          display: 'inline-flex', alignItems: 'center', gap: 5,
+                          fontFamily: 'var(--font-sans)', fontSize: '0.55rem', fontWeight: 400,
+                          letterSpacing: '1.5px', textTransform: 'uppercase',
+                          color: 'rgba(255,255,255,0.5)',
+                        }}>
+                          <Calendar size={10} style={{ color: 'var(--color-accent)' }} />
+                          {new Date(gallery.event_date).toLocaleDateString('en-US', { dateStyle: 'long' })}
+                        </span>
                       )}
                       {gallery.venue && (
-                        <div className="flex items-center gap-1.5 font-light">
-                          <MapPin size={11} className="text-accent" />
-                          <span>{gallery.venue}</span>
-                        </div>
+                        <span style={{
+                          display: 'inline-flex', alignItems: 'center', gap: 5,
+                          fontFamily: 'var(--font-sans)', fontSize: '0.55rem', fontWeight: 400,
+                          letterSpacing: '1.5px', textTransform: 'uppercase',
+                          color: 'rgba(255,255,255,0.5)',
+                        }}>
+                          <MapPin size={10} style={{ color: 'var(--color-accent)' }} />
+                          {gallery.venue}
+                        </span>
                       )}
                     </div>
 
-                    <div 
-                      className="gal-list-card-cta flex items-center gap-2 mt-5 text-[9px] tracking-[3px] uppercase font-semibold text-accent"
+                    {/* Explore CTA */}
+                    <div style={{
+                      display: 'flex', alignItems: 'center', gap: 8, marginTop: 14,
+                      fontFamily: 'var(--font-sans)', fontSize: '0.55rem', fontWeight: 500,
+                      letterSpacing: '2.5px', textTransform: 'uppercase',
+                      color: 'rgba(255,255,255,0.6)',
+                      transition: 'color 0.3s ease, transform 0.3s ease',
+                    }}
+                      className="gal-list-card-cta"
                     >
                       <span>Explore Gallery</span>
-                      <ArrowRight size={10} className="transition-transform duration-300 group-hover:translate-x-1" />
+                      <ArrowRight size={10} />
                     </div>
                   </div>
                 </div>
@@ -182,37 +291,30 @@ export default function GalleryList() {
           </div>
         )}
 
-        {/* Cinematic Footer for Portal */}
-        <div className="mt-24 border-t border-zinc-800/60 pt-12 text-center">
-          <p className="text-[9px] text-zinc-500 tracking-[2px] uppercase leading-relaxed max-w-sm mx-auto">
-            Can&apos;t find your wedding gallery? Contact the studio at{' '}
-            <a href="mailto:beyondweddingss@gmail.com" className="text-white font-semibold underline hover:text-accent transition-colors duration-300">
-              beyondweddingss@gmail.com
+        {/* Footer */}
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: 'clamp(32px, 5vh, 48px) clamp(16px, 3vw, 40px)',
+          marginTop: 'clamp(16px, 3vw, 32px)',
+          borderTop: '1px solid rgba(255,255,255,0.06)',
+          maxWidth: 1100, marginLeft: 'auto', marginRight: 'auto',
+        }}>
+          <p style={{
+            fontFamily: 'var(--font-sans)', fontSize: '0.55rem',
+            letterSpacing: '2px', textTransform: 'uppercase',
+            color: 'rgba(255,255,255,0.2)', textAlign: 'center', lineHeight: 1.8,
+          }}>
+            Can&apos;t find your wedding gallery?{' '}
+            <a href="mailto:beyondweddingss@gmail.com"
+              style={{ color: 'rgba(255,255,255,0.4)', textDecoration: 'underline', transition: 'color 0.25s ease' }}
+              onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}
+              onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.4)'}
+            >
+              Contact the studio
             </a>
           </p>
         </div>
-      </div>
-
-      <style jsx global>{`
-        @keyframes heroPan {
-          0% { transform: scale(1.03) translate(0, 0); }
-          100% { transform: scale(1.08) translate(-1%, -1%); }
-        }
-        .animate-fade-in {
-          animation: fadeIn 1.2s ease forwards;
-        }
-        .animate-fade-in-up {
-          animation: fadeInUp 1.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
+      </section>
     </div>
   );
 }

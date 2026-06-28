@@ -1,318 +1,375 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { galleryService } from '../../../src/lib/services';
 import { Gallery, GalleryImage } from '../../../src/types';
-import { Download, ChevronLeft, ChevronRight, X, ArrowLeft, Calendar, MapPin } from 'lucide-react';
+import {
+  Download, ChevronLeft, ChevronRight, X,
+  ArrowLeft, Calendar, MapPin, ZoomIn, ChevronDown,
+} from 'lucide-react';
 import Link from 'next/link';
 
+/* ─────────────────────────────────────────────────────
+   Main Page
+───────────────────────────────────────────────────── */
 export default function GalleryView() {
-  const router = useRouter();
-  const params = useParams();
-  const slug = params.slug as string;
+  const router  = useRouter();
+  const params  = useParams();
+  const slug    = params.slug as string;
 
-  const [loading, setLoading] = useState(true);
-  const [gallery, setGallery] = useState<Gallery | null>(null);
-  const [images, setImages] = useState<GalleryImage[]>([]);
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [loading,          setLoading]          = useState(true);
+  const [gallery,          setGallery]          = useState<Gallery | null>(null);
+  const [images,           setImages]           = useState<GalleryImage[]>([]);
+  const [lightboxIndex,    setLightboxIndex]    = useState<number | null>(null);
+  const [lightboxLoaded,   setLightboxLoaded]   = useState(false);
+  const [lightboxClosing,  setLightboxClosing]  = useState(false);
+  const [coverLoaded,      setCoverLoaded]      = useState(false);
+  const thumbRef = useRef<HTMLDivElement>(null);
 
+  /* ── Data ── */
   useEffect(() => {
-    const loadGalleryData = async () => {
+    (async () => {
       try {
         const record = await galleryService.getGallery(slug);
-        if (!record) {
-          router.push('/');
-          return;
-        }
-
+        if (!record) { router.push('/'); return; }
         setGallery(record);
-        const imgList = await galleryService.getGalleryImages(record.id);
-        setImages(imgList);
-      } catch (err) {
-        console.error(err);
-        router.push('/');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadGalleryData();
+        setImages(await galleryService.getGalleryImages(record.id));
+      } catch { router.push('/'); }
+      finally  { setLoading(false); }
+    })();
   }, [slug, router]);
 
-  const handleDownload = async (imgUrl: string, fileName: string) => {
-    try {
-      const response = await fetch(imgUrl);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      // Fallback if fetch fails (e.g. CORS)
-      window.open(imgUrl, '_blank');
-    }
-  };
+  /* ── Lightbox helpers ── */
+  const openLightbox = useCallback((idx: number) => {
+    setLightboxClosing(false);
+    setLightboxLoaded(false);
+    setLightboxIndex(idx);
+    document.body.style.overflow = 'hidden';
+  }, []);
 
-  const handlePrevLightbox = (e?: React.MouseEvent) => {
+  const closeLightbox = useCallback(() => {
+    setLightboxClosing(true);
+    setTimeout(() => {
+      setLightboxIndex(null);
+      setLightboxClosing(false);
+      document.body.style.overflow = '';
+    }, 340);
+  }, []);
+
+  const goPrev = useCallback((e?: React.MouseEvent) => {
     e?.stopPropagation();
-    if (lightboxIndex === null) return;
-    setLightboxIndex((prev) => (prev !== null && prev > 0 ? prev - 1 : images.length - 1));
-  };
+    setLightboxLoaded(false);
+    setLightboxIndex(p => p !== null ? (p > 0 ? p - 1 : images.length - 1) : null);
+  }, [images.length]);
 
-  const handleNextLightbox = (e?: React.MouseEvent) => {
+  const goNext = useCallback((e?: React.MouseEvent) => {
     e?.stopPropagation();
-    if (lightboxIndex === null) return;
-    setLightboxIndex((prev) => (prev !== null && prev < images.length - 1 ? prev + 1 : 0));
-  };
+    setLightboxLoaded(false);
+    setLightboxIndex(p => p !== null ? (p < images.length - 1 ? p + 1 : 0) : null);
+  }, [images.length]);
 
+  /* ── Keyboard ── */
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    const onKey = (e: KeyboardEvent) => {
       if (lightboxIndex === null) return;
-      if (e.key === 'ArrowLeft') handlePrevLightbox();
-      if (e.key === 'ArrowRight') handleNextLightbox();
-      if (e.key === 'Escape') setLightboxIndex(null);
+      if (e.key === 'ArrowLeft')  goPrev();
+      if (e.key === 'ArrowRight') goNext();
+      if (e.key === 'Escape')     closeLightbox();
     };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [lightboxIndex, goPrev, goNext, closeLightbox]);
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+  /* ── Auto-scroll filmstrip ── */
+  useEffect(() => {
+    if (lightboxIndex === null || !thumbRef.current) return;
+    const strip = thumbRef.current;
+    const thumb = strip.children[lightboxIndex] as HTMLElement;
+    if (thumb) {
+      strip.scrollTo({
+        left: thumb.offsetLeft - strip.clientWidth / 2 + thumb.clientWidth / 2,
+        behavior: 'smooth',
+      });
+    }
   }, [lightboxIndex]);
 
-  if (loading) {
-    return (
-      <div className="flex-grow flex items-center justify-center bg-bg min-h-screen">
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-[10px] tracking-[2px] uppercase text-text-muted">Loading private gallery...</p>
-        </div>
-      </div>
-    );
-  }
+  /* ── Download ── */
+  const handleDownload = async (url: string, name: string) => {
+    try {
+      const blob = await fetch(url).then(r => r.blob());
+      const a = Object.assign(document.createElement('a'), {
+        href: URL.createObjectURL(blob), download: name,
+      });
+      document.body.appendChild(a); a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+    } catch { window.open(url, '_blank'); }
+  };
+
+  /* ── Scroll to grid ── */
+  const scrollToGrid = () => {
+    document.getElementById('gal-grid-anchor')
+      ?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  /* ── Loading state ── */
+  if (loading) return (
+    <div className="gal-fs-loading">
+      <div className="gal-fs-spin" />
+      <p>Loading gallery…</p>
+    </div>
+  );
 
   if (!gallery) return null;
 
-  // Split gallery images into 3 columns for local masonry
-  const col1 = images.filter((_, idx) => idx % 3 === 0);
-  const col2 = images.filter((_, idx) => idx % 3 === 1);
-  const col3 = images.filter((_, idx) => idx % 3 === 2);
+  /* ── 3-col distribution ── */
+  const col1 = images.filter((_, i) => i % 3 === 0);
+  const col2 = images.filter((_, i) => i % 3 === 1);
+  const col3 = images.filter((_, i) => i % 3 === 2);
+  const isOpen = lightboxIndex !== null;
 
   return (
-    <div className="flex-grow bg-bg min-h-screen pt-48 pb-24 px-6 select-none">
-      <div className="max-w-[1300px] mx-auto">
+    <>
+      {/* ══════════════════════════════════════════════════
+          MAIN CANVAS  (blurs behind lightbox)
+      ══════════════════════════════════════════════════ */}
+      <div
+        className="gal-canvas"
+        style={{
+          filter:        isOpen ? 'blur(12px) brightness(0.45) saturate(0.6)' : 'none',
+          transition:    'filter 0.45s cubic-bezier(0.4,0,0.2,1)',
+          willChange:    'filter',
+          pointerEvents: isOpen ? 'none' : 'auto',
+        }}
+      >
 
-        {/* Navigation & Info */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-[#E8E3DC] pb-8 mb-12 gap-6">
-          <div>
-            <Link href="/gallery" className="inline-flex items-center gap-2 text-[10px] text-text-muted tracking-[2px] uppercase hover:text-accent mb-4 transition-colors">
-              <ArrowLeft size={10} />
-              <span>Back to galleries</span>
-            </Link>
-            <h1 className="text-3xl md:text-4xl font-serif tracking-[1.5px] uppercase text-text">
-              {gallery.gallery_name}
-            </h1>
-            <div className="flex flex-wrap gap-6 text-xs text-text-muted mt-3">
-              {gallery.event_date && (
-                <div className="flex items-center gap-1.5 font-light">
-                  <Calendar size={13} className="text-accent" />
-                  <span>{new Date(gallery.event_date).toLocaleDateString('en-US', { dateStyle: 'long' })}</span>
-                </div>
-              )}
-              {gallery.venue && (
-                <div className="flex items-center gap-1.5 font-light">
-                  <MapPin size={13} className="text-accent" />
-                  <span>{gallery.venue}</span>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <button
-            onClick={() => {
-              // Download all images in a batch or loop (MVP downloads single files, button is placeholder/informational here)
-              alert('Click download on individual photos to get full-resolution files.');
-            }}
-            className="flex items-center gap-2 self-start md:self-auto px-5 py-3 border border-text text-text text-[10px] tracking-[2.5px] uppercase hover:bg-text hover:text-white transition-colors rounded-xl"
-          >
-            <Download size={12} />
-            <span>Download Instructions</span>
-          </button>
-        </div>
-
-        {/* Gallery Grid */}
-        {images.length === 0 ? (
-          <div className="text-center py-20 border border-dashed border-[#E8E3DC] rounded-2xl bg-white/50">
-            <p className="text-sm text-text-muted tracking-wide uppercase">No images uploaded in this gallery yet.</p>
-          </div>
-        ) : (
-          <div className="grid-container">
-            {/* Column 1 */}
-            <div className="grid-col flex-1 flex flex-col gap-6">
-              {col1.map((img) => {
-                const idx = images.indexOf(img);
-                return (
-                  <div 
-                    key={img.id} 
-                    className="relative group cursor-pointer overflow-hidden rounded-2xl bg-[#E8E3DC] aspect-auto"
-                    style={{ transform: 'translateZ(0)' }}
-                  >
-                    <img
-                      src={img.image_url}
-                      alt={img.file_name}
-                      onClick={() => setLightboxIndex(idx)}
-                      className="w-full h-auto object-cover transition-transform duration-700 hover:scale-102"
-                      style={{ transform: 'translateZ(0)', willChange: 'transform' }}
-                      loading="lazy"
-                    />
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDownload(img.image_url, img.file_name);
-                      }}
-                      className="absolute bottom-4 right-4 bg-white/90 text-text p-2.5 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white hover:scale-105"
-                      style={{ transform: 'translateZ(0)', willChange: 'transform, opacity' }}
-                      aria-label="Download Image"
-                    >
-                      <Download size={13} />
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Column 2 */}
-            <div className="grid-col flex-1 flex flex-col gap-6">
-              {col2.map((img) => {
-                const idx = images.indexOf(img);
-                return (
-                  <div 
-                    key={img.id} 
-                    className="relative group cursor-pointer overflow-hidden rounded-2xl bg-[#E8E3DC] aspect-auto"
-                    style={{ transform: 'translateZ(0)' }}
-                  >
-                    <img
-                      src={img.image_url}
-                      alt={img.file_name}
-                      onClick={() => setLightboxIndex(idx)}
-                      className="w-full h-auto object-cover transition-transform duration-700 hover:scale-102"
-                      style={{ transform: 'translateZ(0)', willChange: 'transform' }}
-                      loading="lazy"
-                    />
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDownload(img.image_url, img.file_name);
-                      }}
-                      className="absolute bottom-4 right-4 bg-white/90 text-text p-2.5 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white hover:scale-105"
-                      style={{ transform: 'translateZ(0)', willChange: 'transform, opacity' }}
-                      aria-label="Download Image"
-                    >
-                      <Download size={13} />
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Column 3 */}
-            <div className="grid-col flex-1 flex flex-col gap-6">
-              {col3.map((img) => {
-                const idx = images.indexOf(img);
-                return (
-                  <div 
-                    key={img.id} 
-                    className="relative group cursor-pointer overflow-hidden rounded-2xl bg-[#E8E3DC] aspect-auto"
-                    style={{ transform: 'translateZ(0)' }}
-                  >
-                    <img
-                      src={img.image_url}
-                      alt={img.file_name}
-                      onClick={() => setLightboxIndex(idx)}
-                      className="w-full h-auto object-cover transition-transform duration-700 hover:scale-102"
-                      style={{ transform: 'translateZ(0)', willChange: 'transform' }}
-                      loading="lazy"
-                    />
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDownload(img.image_url, img.file_name);
-                      }}
-                      className="absolute bottom-4 right-4 bg-white/90 text-text p-2.5 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white hover:scale-105"
-                      style={{ transform: 'translateZ(0)', willChange: 'transform, opacity' }}
-                      aria-label="Download Image"
-                    >
-                      <Download size={13} />
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-      </div>
-
-      {/* Fullscreen Lightbox Overlay */}
-      {lightboxIndex !== null && (
-        <div
-          className="fixed inset-0 bg-black/95 z-[9999] flex flex-col items-center justify-center"
-          onClick={() => setLightboxIndex(null)}
-        >
-          {/* Controls */}
-          <button
-            onClick={() => setLightboxIndex(null)}
-            className="absolute top-6 right-6 text-white/70 hover:text-white p-2"
-            aria-label="Close Lightbox"
-          >
-            <X size={20} />
-          </button>
-
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleDownload(images[lightboxIndex].image_url, images[lightboxIndex].file_name);
-            }}
-            className="absolute top-6 left-6 text-white/70 hover:text-white flex items-center gap-1.5 text-[10px] tracking-[2px] uppercase bg-white/10 px-4 py-2 rounded-full"
-            aria-label="Download Image"
-          >
-            <Download size={12} />
-            <span>Download</span>
-          </button>
-
-          <button
-            onClick={handlePrevLightbox}
-            className="absolute left-6 top-1/2 -translate-y-1/2 text-white/50 hover:text-white p-4"
-            aria-label="Previous Image"
-          >
-            <ChevronLeft size={36} className="font-light" />
-          </button>
-
-          <button
-            onClick={handleNextLightbox}
-            className="absolute right-6 top-1/2 -translate-y-1/2 text-white/50 hover:text-white p-4"
-            aria-label="Next Image"
-          >
-            <ChevronRight size={36} className="font-light" />
-          </button>
-
-          {/* Image slide */}
-          <div className="max-w-[85vw] max-h-[75vh] relative flex items-center justify-center">
+        {/* ── HERO ─────────────────────────────────────── */}
+        <section className="gal-hero">
+          {/* Cover image */}
+          <div className="gal-hero-bg">
             <img
-              src={images[lightboxIndex].image_url}
-              alt={images[lightboxIndex].file_name}
-              className="max-w-full max-h-[75vh] object-contain rounded shadow-lg"
+              src={gallery.cover_image || images[0]?.image_url || '/images/bibin-anju/a.jpg'}
+              alt={gallery.gallery_name}
+              className={`gal-hero-bg-img ${coverLoaded ? 'gal-hero-bg-img--loaded' : ''}`}
+              onLoad={() => setCoverLoaded(true)}
+              draggable={false}
             />
           </div>
 
-          {/* Index indicator */}
-          <div className="absolute bottom-8 text-white/50 text-[10px] tracking-[2px] uppercase">
-            {lightboxIndex + 1} / {images.length} — {images[lightboxIndex].file_name}
+          {/* Gradient overlays */}
+          <div className="gal-hero-grad-top"    />
+          <div className="gal-hero-grad-bottom" />
+
+          {/* Back link — top-left */}
+          <Link href="/gallery" className="gal-hero-back">
+            <ArrowLeft size={12} />
+            <span>Galleries</span>
+          </Link>
+
+          {/* Centre content */}
+          <div className="gal-hero-content">
+            <p className="gal-hero-label">Private Collection</p>
+            <h1 className="gal-hero-title">{gallery.gallery_name}</h1>
+            <div className="gal-hero-meta">
+              {gallery.event_date && (
+                <span className="gal-hero-meta-item">
+                  <Calendar size={11} />
+                  {new Date(gallery.event_date).toLocaleDateString('en-US', { dateStyle: 'long' })}
+                </span>
+              )}
+              {gallery.venue && (
+                <span className="gal-hero-meta-item">
+                  <MapPin size={11} />
+                  {gallery.venue}
+                </span>
+              )}
+              <span className="gal-hero-meta-item">
+                {images.length} Photographs
+              </span>
+            </div>
+          </div>
+
+          {/* Scroll cue */}
+          <button className="gal-hero-scroll" onClick={scrollToGrid} aria-label="Scroll to gallery">
+            <span>View Gallery</span>
+            <ChevronDown size={16} className="gal-hero-scroll-icon" />
+          </button>
+        </section>
+
+        {/* ── GRID ANCHOR ─────────────────────────────── */}
+        <div id="gal-grid-anchor" />
+
+        {/* ── MASONRY GRID ─────────────────────────────── */}
+        <section className="gal-grid-section">
+          {images.length === 0 ? (
+            <div className="gal-empty">No photographs in this gallery yet.</div>
+          ) : (
+            <div className="gal-grid">
+              <div className="gal-col">
+                {col1.map(img => (
+                  <GalleryCard key={img.id} img={img} idx={images.indexOf(img)}
+                    onOpen={() => openLightbox(images.indexOf(img))}
+                    onDownload={() => handleDownload(img.image_url, img.file_name)} />
+                ))}
+              </div>
+              <div className="gal-col gal-col--mid">
+                {col2.map(img => (
+                  <GalleryCard key={img.id} img={img} idx={images.indexOf(img)}
+                    onOpen={() => openLightbox(images.indexOf(img))}
+                    onDownload={() => handleDownload(img.image_url, img.file_name)} />
+                ))}
+              </div>
+              <div className="gal-col gal-col--late">
+                {col3.map(img => (
+                  <GalleryCard key={img.id} img={img} idx={images.indexOf(img)}
+                    onOpen={() => openLightbox(images.indexOf(img))}
+                    onDownload={() => handleDownload(img.image_url, img.file_name)} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Footer strip inside dark section */}
+          <div className="gal-grid-footer">
+            <span className="gal-grid-footer-brand">Beyond Weddings</span>
+            <Link href="/gallery" className="gal-grid-footer-back">
+              <ArrowLeft size={10} /> All Galleries
+            </Link>
+          </div>
+        </section>
+
+      </div>{/* /gal-canvas */}
+
+      {/* ══════════════════════════════════════════════════
+          LIGHTBOX
+      ══════════════════════════════════════════════════ */}
+      {lightboxIndex !== null && (
+        <div
+          role="dialog" aria-modal="true" aria-label="Image viewer"
+          className={`gal-lb ${lightboxClosing ? 'gal-lb--out' : 'gal-lb--in'}`}
+          onClick={closeLightbox}
+        >
+          {/* ── Top bar ── */}
+          <div className="gal-lb-bar" onClick={e => e.stopPropagation()}>
+            <button
+              className="gal-lb-pill"
+              onClick={() => handleDownload(images[lightboxIndex].image_url, images[lightboxIndex].file_name)}
+            >
+              <Download size={13} /> <span>Download</span>
+            </button>
+
+            <div className="gal-lb-count">
+              <span className="gal-lb-count-cur">{String(lightboxIndex + 1).padStart(2, '0')}</span>
+              <span className="gal-lb-count-sep"> / </span>
+              <span className="gal-lb-count-tot">{String(images.length).padStart(2, '0')}</span>
+            </div>
+
+            <button className="gal-lb-close" onClick={closeLightbox} aria-label="Close">
+              <X size={17} />
+            </button>
+          </div>
+
+          {/* ── Arrows ── */}
+          <button className="gal-lb-arrow gal-lb-arrow--l" onClick={goPrev} aria-label="Previous">
+            <ChevronLeft size={28} />
+          </button>
+          <button className="gal-lb-arrow gal-lb-arrow--r" onClick={goNext} aria-label="Next">
+            <ChevronRight size={28} />
+          </button>
+
+          {/* ── Image ── */}
+          <div className="gal-lb-stage" onClick={e => e.stopPropagation()}>
+            {!lightboxLoaded && (
+              <div className="gal-lb-loader">
+                <div className="gal-lb-loader-ring" />
+              </div>
+            )}
+            <img
+              key={images[lightboxIndex].id}
+              src={images[lightboxIndex].image_url}
+              alt={images[lightboxIndex].file_name}
+              draggable={false}
+              onLoad={() => setLightboxLoaded(true)}
+              className={`gal-lb-img ${lightboxLoaded ? 'gal-lb-img--on' : ''}`}
+            />
+          </div>
+
+          {/* ── Caption ── */}
+          <div className="gal-lb-caption" onClick={e => e.stopPropagation()}>
+            {gallery.gallery_name} &mdash; {gallery.venue || ''}
+          </div>
+
+          {/* ── Filmstrip ── */}
+          <div className="gal-lb-strip" ref={thumbRef} onClick={e => e.stopPropagation()}>
+            {images.map((img, i) => (
+              <button
+                key={img.id}
+                aria-label={`Image ${i + 1}`}
+                className={`gal-lb-thumb ${i === lightboxIndex ? 'gal-lb-thumb--on' : ''}`}
+                onClick={() => { setLightboxLoaded(false); setLightboxIndex(i); }}
+              >
+                <img src={img.image_url} alt="" draggable={false} />
+              </button>
+            ))}
           </div>
         </div>
       )}
+    </>
+  );
+}
+
+/* ─────────────────────────────────────────────────────
+   Gallery Card
+───────────────────────────────────────────────────── */
+function GalleryCard({
+  img, idx, onOpen, onDownload,
+}: {
+  img: GalleryImage; idx: number;
+  onOpen: () => void; onDownload: () => void;
+}) {
+  const [loaded, setLoaded] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  /* IntersectionObserver reveal */
+  useEffect(() => {
+    const el = ref.current; if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); io.disconnect(); } },
+      { rootMargin: '0px 0px -60px 0px', threshold: 0.08 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className={`gal-card ${visible ? 'gal-card--vis' : ''}`}
+      style={{ transitionDelay: `${(idx % 4) * 55}ms` }}
+    >
+      <div className="gal-card-inner" onClick={onOpen}>
+        {!loaded && <div className="gal-card-skel" />}
+        <img
+          src={img.image_url}
+          alt={img.file_name}
+          draggable={false}
+          loading="lazy"
+          onLoad={() => setLoaded(true)}
+          className={`gal-card-img ${loaded ? 'gal-card-img--on' : ''}`}
+        />
+        <div className="gal-card-ov">
+          <ZoomIn size={22} className="gal-card-zoom" />
+        </div>
+        <button
+          className="gal-card-dl"
+          onClick={e => { e.stopPropagation(); onDownload(); }}
+          aria-label="Download"
+        >
+          <Download size={12} />
+        </button>
+      </div>
     </div>
   );
 }
