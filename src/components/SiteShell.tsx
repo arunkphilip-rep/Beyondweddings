@@ -19,7 +19,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Preloader />
-      {pathname === '/' && <Navbar />}
+      {(pathname === '/' || pathname === '/gallery') && <Navbar />}
       <SmoothScroll>
         {children}
       </SmoothScroll>

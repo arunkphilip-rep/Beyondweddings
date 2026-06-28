@@ -10,6 +10,8 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
+const cachedDynamicGalleries: Record<string, { gallery: Gallery; images: GalleryImage[] }> = {};
+
 /* ─────────────────────────────────────────────────────
    Main Page
 ───────────────────────────────────────────────────── */
@@ -18,9 +20,9 @@ export default function GalleryView() {
   const params  = useParams();
   const slug    = params.slug as string;
 
-  const [loading,          setLoading]          = useState(true);
-  const [gallery,          setGallery]          = useState<Gallery | null>(null);
-  const [images,           setImages]           = useState<GalleryImage[]>([]);
+  const [loading,          setLoading]          = useState(!cachedDynamicGalleries[slug]);
+  const [gallery,          setGallery]          = useState<Gallery | null>(cachedDynamicGalleries[slug]?.gallery || null);
+  const [images,           setImages]           = useState<GalleryImage[]>(cachedDynamicGalleries[slug]?.images || []);
   const [lightboxIndex,    setLightboxIndex]    = useState<number | null>(null);
   const [lightboxLoaded,   setLightboxLoaded]   = useState(false);
   const [lightboxClosing,  setLightboxClosing]  = useState(false);
@@ -33,8 +35,10 @@ export default function GalleryView() {
       try {
         const record = await galleryService.getGallery(slug);
         if (!record) { router.push('/'); return; }
+        const imgList = await galleryService.getGalleryImages(record.id);
+        cachedDynamicGalleries[slug] = { gallery: record, images: imgList };
         setGallery(record);
-        setImages(await galleryService.getGalleryImages(record.id));
+        setImages(imgList);
       } catch { router.push('/'); }
       finally  { setLoading(false); }
     })();

@@ -6,9 +6,12 @@ import { ArrowRight } from 'lucide-react';
 import { galleryService } from '../../src/lib/services';
 import { Gallery } from '../../src/types';
 
+let cachedGalleries: Gallery[] | null = null;
+let cachedScrollY = 0;
+
 export default function GalleryList() {
-  const [galleries, setGalleries] = useState<Gallery[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [galleries, setGalleries] = useState<Gallery[]>(cachedGalleries || []);
+  const [loading, setLoading] = useState(cachedGalleries === null);
   const [visibleIds, setVisibleIds] = useState<Record<string, boolean>>({});
   const gridRef = useRef<HTMLDivElement>(null);
 
@@ -16,6 +19,7 @@ export default function GalleryList() {
     const fetchGalleries = async () => {
       try {
         const list = await galleryService.getAllGalleries();
+        cachedGalleries = list;
         setGalleries(list);
       } catch (err) {
         console.error('Failed to fetch galleries:', err);
@@ -25,6 +29,31 @@ export default function GalleryList() {
     };
     fetchGalleries();
   }, []);
+
+  // Save scroll position on unmount
+  useEffect(() => {
+    return () => {
+      if (typeof window !== 'undefined') {
+        cachedScrollY = window.scrollY || document.documentElement.scrollTop;
+      }
+    };
+  }, []);
+
+  // Restore scroll position once data is ready
+  useEffect(() => {
+    if (!loading && cachedScrollY > 0) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const lenis = (window as any).lenisInstance;
+          if (lenis) {
+            lenis.scrollTo(cachedScrollY, { immediate: true });
+          } else {
+            window.scrollTo(0, cachedScrollY);
+          }
+        });
+      });
+    }
+  }, [loading]);
 
   // IntersectionObserver — stagger each card
   useEffect(() => {
