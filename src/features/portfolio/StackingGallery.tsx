@@ -8,6 +8,7 @@ interface Project {
   title: string;
   cover: string;
   images: string[];
+  slug: string;
 }
 
 interface StackingGalleryProps {

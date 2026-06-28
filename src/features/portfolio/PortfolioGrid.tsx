@@ -8,6 +8,7 @@ export interface Project {
   title: string;
   cover: string;
   images: string[];
+  slug: string;
 }
 
 interface PortfolioGridProps {
@@ -32,6 +33,7 @@ export default function PortfolioGrid({ onOpenProject, limit }: PortfolioGridPro
               title: g.gallery_name,
               cover: g.cover_image || '/images/bibin-anju/a.jpg',
               images: imgs.map((img) => img.image_url),
+              slug: g.slug,
             };
           })
         );

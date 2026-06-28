@@ -1,8 +1,8 @@
- 'use client';
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-
+import { X } from 'lucide-react';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,30 +18,6 @@ export default function Navbar() {
       document.body.classList.remove('menu-open', 'overlay-open');
     }
   }, [isOpen]);
-
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
-    e.preventDefault();
-    setIsOpen(false);
-    
-    // Check if we are on the homepage
-    const isHome = window.location.pathname === '/';
-    if (isHome) {
-      const target = document.getElementById(sectionId);
-      if (target) {
-        // If Lenis is installed on window, we can use it, or fallback to scrollIntoView
-        const lenis = (window as Window & { lenisInstance?: { scrollTo: (el: Element) => void } }).lenisInstance;
-
-        if (lenis) {
-          lenis.scrollTo(target);
-        } else {
-          target.scrollIntoView({ behavior: 'smooth' });
-        }
-      }
-    } else {
-      // Navigate to homepage with anchor
-      window.location.href = `/#${sectionId}`;
-    }
-  };
 
   return (
     <>
@@ -82,51 +58,84 @@ export default function Navbar() {
       </header>
 
       {/* Overlay Navigation Menu (Black Curtain) */}
-      <div className={`nav-overlay ${isOpen ? 'open' : ''}`} id="navOverlay">
-        <div className="overlay-top-row">
-          <div className="overlay-left-col">
-            <button 
-              className="menu-toggle nav-link-overlay" 
-              id="menuCloseToggle" 
-              onClick={toggleMenu}
-              aria-label="Close Menu"
-            >
-              CLOSE
-            </button>
-          </div>
-          <div className="overlay-center-col"></div>
-          <div className="overlay-right-col">
+      <div 
+        className={`nav-overlay ${isOpen ? 'open' : ''} flex flex-col items-center justify-center`} 
+        id="navOverlay"
+        style={{
+          background: 'rgba(6, 5, 4, 0.98)',
+          backdropFilter: 'blur(15px)',
+          WebkitBackdropFilter: 'blur(15px)',
+        }}
+      >
+        {/* Top Close Button (X icon only on mobile, X + Close on desktop) */}
+        <div className="absolute top-6 right-6 z-[1600]">
+          <button 
+            className="group flex items-center gap-2 text-white/70 hover:text-accent border border-white/10 hover:border-accent/40 bg-white/5 hover:bg-white/10 px-3.5 py-2 md:px-5 md:py-2.5 rounded-full transition-all duration-300 cursor-pointer"
+            onClick={toggleMenu}
+            aria-label="Close Menu"
+          >
+            <X size={15} className="transition-transform duration-300 group-hover:rotate-90" />
+            <span className="hidden sm:inline text-[9px] tracking-[2.5px] uppercase font-medium">Close</span>
+          </button>
+        </div>
+
+        {/* Centered Premium Content Wrapper */}
+        <div className="flex flex-col items-center justify-center max-w-lg w-full text-center px-6 py-12 gap-8 md:gap-12 animate-fade-in-menu">
+          
+          {/* Beyond Weddings Logo */}
+          <Link href="/" className="mb-4 transition-transform duration-500 hover:scale-[1.025]" onClick={toggleMenu}>
+            <img
+              src="/images/logo/white.png"
+              alt="Beyond Weddings Logo"
+              className="h-14 md:h-20 w-auto max-w-[200px] md:max-w-[280px] object-contain drop-shadow-[0_4px_24px_rgba(255,255,255,0.06)]"
+              loading="eager"
+            />
+          </Link>
+
+          {/* Connect Details */}
+          <div className="flex flex-col gap-6 md:gap-8 w-full">
+            <div className="h-[1px] bg-white/10 w-16 mx-auto mb-2" />
+            
             <a 
               href="https://www.instagram.com/beyond_weddingss/" 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="nav-link-overlay"
+              className="group flex flex-col items-center gap-1.5 transition-all duration-300"
             >
-              @beyondweddings
+              <span className="text-[9px] tracking-[4px] uppercase text-zinc-500 group-hover:text-accent transition-colors">INSTAGRAM</span>
+              <span className="text-sm md:text-base font-light tracking-[2px] text-white/90 group-hover:text-accent transition-colors">@beyond_weddingss</span>
             </a>
+
+            <a 
+              href="tel:+918714003230" 
+              className="group flex flex-col items-center gap-1.5 transition-all duration-300"
+            >
+              <span className="text-[9px] tracking-[4px] uppercase text-zinc-500 group-hover:text-accent transition-colors">PHONE</span>
+              <span className="text-sm md:text-base font-light tracking-[2px] text-white/90 group-hover:text-accent transition-colors">+91 87140 03230</span>
+            </a>
+
+            <a 
+              href="mailto:beyondweddingss@gmail.com" 
+              className="group flex flex-col items-center gap-1.5 transition-all duration-300"
+            >
+              <span className="text-[9px] tracking-[4px] uppercase text-zinc-500 group-hover:text-accent transition-colors">EMAIL</span>
+              <span className="text-sm md:text-base font-light tracking-[2px] text-white/90 group-hover:text-accent transition-colors">beyondweddingss@gmail.com</span>
+            </a>
+
+            <div className="h-[1px] bg-white/10 w-16 mx-auto mt-2" />
           </div>
-        </div>
-        
-        <div className="overlay-main-section">
-          <div className="overlay-left-col overlay-contact-details">
-            <a href="tel:+918714003230">+91 87140 03230</a>
-            <a href="mailto:beyondweddingss@gmail.com">beyondweddingss@gmail.com</a>
-            <Link href="/gallery" className="mt-4 px-4 py-2 border border-white/20 text-white text-[10px] tracking-[2px] uppercase hover:bg-white hover:text-black transition-colors" onClick={() => setIsOpen(false)}>
-              Client Portal
-            </Link>
-          </div>
-          
-          <div className="overlay-center-col overlay-menu-links">
-            <a href="#home" className="menu-item" onClick={(e) => handleLinkClick(e, 'home')}>HOME</a>
-            <a href="#about" className="menu-item" onClick={(e) => handleLinkClick(e, 'about')}>ABOUT</a>
-            <Link href="/portfolio" className="menu-item" onClick={() => setIsOpen(false)}>PORTFOLIO</Link>
-            <a href="#faq" className="menu-item" onClick={(e) => handleLinkClick(e, 'faq')}>FAQ</a>
-            <a href="#contact" className="menu-item" onClick={(e) => handleLinkClick(e, 'contact')}>CONTACT</a>
-          </div>
-          
-          <div className="overlay-right-col"></div>
         </div>
       </div>
+
+      <style jsx global>{`
+        .animate-fade-in-menu {
+          animation: menuFadeIn 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+        @keyframes menuFadeIn {
+          from { opacity: 0; transform: scale(0.96) translateY(10px); }
+          to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+      `}</style>
     </>
   );
 }

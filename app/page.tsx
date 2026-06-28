@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import PortfolioGrid from '../src/features/portfolio/PortfolioGrid';
 import StackingGallery from '../src/features/portfolio/StackingGallery';
 import ContactForm from '../src/features/inquiries/ContactForm';
@@ -10,9 +11,11 @@ interface Project {
   title: string;
   cover: string;
   images: string[];
+  slug: string;
 }
 
 export default function Home() {
+  const router = useRouter();
   const [isRevealed, setIsRevealed] = useState(false);
   const [heroSlide, setHeroSlide] = useState(0);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -40,19 +43,19 @@ export default function Home() {
   const testimonials = [
     {
       text: `"Beyond Weddings captured our day with such artistry and emotion. Every photo feels like a piece of art. We are forever grateful."`,
-      author: '— Mariam & Karen'
+      author: '— Bibin & Anju'
     },
     {
       text: `"From the first consultation to the final gallery, the experience was flawless. The photos transport us back to every moment."`,
-      author: '— Xhenisha & Erald'
+      author: '— Mathew & Haritha'
     },
     {
       text: `"An absolutely incredible team. They made us feel so comfortable and the results are breathtaking. Truly beyond our expectations."`,
-      author: '— Nazeli & Raffi'
+      author: '— Johney & Jaisy'
     },
     {
       text: `"The attention to detail and editorial style is unmatched. Our wedding album is a masterpiece we\'ll cherish forever."`,
-      author: '— Elena & Andrea'
+      author: '— Sobin & Ditty'
     }
   ];
 
@@ -278,16 +281,9 @@ export default function Home() {
               <p className="section-desc">A curated selection of our finest work. Click to view story frames.</p>
             </div>
 
-            <PortfolioGrid onOpenProject={(project) => setSelectedProject(project)} limit={6} />
+            <PortfolioGrid onOpenProject={(project) => router.push(`/gallery/${project.slug}`)} limit={6} />
 
-            <div className="flex justify-center mt-12">
-              <a
-                href="/portfolio"
-                className="px-8 py-4 border border-text text-text text-[10px] tracking-[3px] uppercase hover:bg-text hover:text-white transition-all duration-300 rounded-xl"
-              >
-                VIEW ALL PORTFOLIO
-              </a>
-            </div>
+
           </section>
 
           {/* ======== TESTIMONIALS SECTION ======== */}

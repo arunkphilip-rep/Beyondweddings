@@ -1208,22 +1208,55 @@ body.project-view-open .header {
 
 .project-close-btn {
   position: absolute;
-  top: 40px;
-  left: 40px;
+  top: clamp(16px, 3vw, 36px);
+  right: clamp(16px, 3vw, 36px);
+  left: auto !important;
   background: none;
   border: none;
   font-family: var(--font-sans);
-  font-size: 0.75rem;
+  font-size: 0.68rem;
   font-weight: 500;
   letter-spacing: 0.15em;
   color: #000;
   cursor: pointer;
   z-index: 9002;
-  transition: opacity 0.3s;
+  transition: opacity 0.3s, background-color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: uppercase;
 }
 
 .project-close-btn:hover {
-  opacity: 0.6;
+  opacity: 0.7;
+}
+
+.project-close-btn svg {
+  transition: transform 0.3s ease;
+}
+
+.project-close-btn:hover svg {
+  transform: rotate(90deg);
+}
+
+@media (max-width: 767px) {
+  .project-close-btn span {
+    display: none;
+  }
+  .project-close-btn {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    justify-content: center;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    top: 16px;
+    right: 16px;
+    color: #1c1c1c;
+  }
 }
 
 .project-overlay-header {
@@ -1494,5 +1527,44 @@ body.menu-open #menuToggleTextWrap {
 
   .footer {
     padding: 80px 24px 35px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   GALLERY LIST — CINEMATIC CARD GRID
+   ═══════════════════════════════════════════════════════ */
+
+/* Image zoom on hover */
+.gal-list-card-inner {
+  transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1),
+              box-shadow 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.gal-list-card-inner:hover {
+  transform: translateY(-6px) translateZ(0);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+}
+
+.gal-list-card-img {
+  transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.gal-list-card-inner:hover .gal-list-card-img {
+  transform: scale(1.07) translateZ(0);
+}
+
+/* Explore CTA slide */
+.gal-list-card-cta {
+  transition: color 0.3s ease, transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.gal-list-card-inner:hover .gal-list-card-cta {
+  color: #fff !important;
+  transform: translateX(4px);
+}
+
+@media (max-width: 639px) {
+  .gal-list-card-cta {
+    font-size: 8px !important;
   }
 }

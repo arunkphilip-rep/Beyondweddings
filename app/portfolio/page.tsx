@@ -9,6 +9,7 @@ interface Project {
   title: string;
   cover: string;
   images: string[];
+  slug: string;
 }
 
 export default function PortfolioPage() {
