@@ -27,7 +27,6 @@ export default function Footer() {
           <a href="#home" onClick={(e) => handleScroll(e, 'home')}>HOME</a>
           <a href="#about" onClick={(e) => handleScroll(e, 'about')}>ABOUT</a>
           <a href="#portfolio" onClick={(e) => handleScroll(e, 'portfolio')}>PORTFOLIO</a>
-          <a href="#faq" onClick={(e) => handleScroll(e, 'faq')}>FAQ</a>
           <a href="#contact" onClick={(e) => handleScroll(e, 'contact')}>CONTACT</a>
         </div>
         

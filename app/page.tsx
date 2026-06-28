@@ -23,8 +23,6 @@ export default function Home() {
   // Testimonials state
   const [testimonialIndex, setTestimonialIndex] = useState(0);
 
-  // FAQ state
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   // Stats numbers state
   const [stats, setStats] = useState({ weddings: 0, professional: 0, years: 0, devotion: 0 });
@@ -59,29 +57,6 @@ export default function Home() {
     }
   ];
 
-  // FAQs data
-  const faqs = [
-    {
-      q: 'How would you describe your photography style?',
-      a: 'Our style is a blend of fine art and editorial wedding photography. We focus on natural light, authentic emotions, and timeless compositions. Each image is crafted with the same care and attention as a fashion editorial, ensuring your wedding gallery is both beautiful and deeply personal.'
-    },
-    {
-      q: 'Do you travel for weddings?',
-      a: 'Absolutely. We are based in Europe but available worldwide. Destination weddings are our passion — we love capturing love stories in stunning locations across the globe. We handle travel logistics seamlessly so you can focus on your day.'
-    },
-    {
-      q: 'How many images do we receive?',
-      a: 'For a full wedding day, you can expect 600–800+ carefully edited images. Each photo is individually color-graded and retouched. You receive high-resolution digital files with full printing rights, delivered through an online gallery.'
-    },
-    {
-      q: 'How far in advance should we book?',
-      a: 'We recommend booking 8–12 months in advance to secure your date, especially for peak wedding season. However, we occasionally have last-minute availability — reach out and we\'ll check our calendar.'
-    },
-    {
-      q: 'Do you offer engagement shoots?',
-      a: 'Yes! Engagement sessions are included in our premium packages. They\'re a wonderful way to get comfortable in front of the camera before the wedding day, and the images are perfect for save-the-dates and welcome signage.'
-    }
-  ];
 
   useEffect(() => {
     // 1. Reveal page content wrapper on load
@@ -321,40 +296,6 @@ export default function Home() {
             </div>
           </section>
 
-          {/* ======== FAQ SECTION ======== */}
-          <section id="faq" className="section faq-section bg-bg">
-            <div className="section-inner">
-              <h2 className="section-label text-center">FAQ</h2>
-              <h3 className="section-title text-center">Frequently Asked Questions</h3>
-
-              <div className="faq-list max-w-[800px] mx-auto mt-10">
-                {faqs.map((faq, idx) => {
-                  const isOpen = openFaq === idx;
-                  return (
-                    <div key={idx} className="faq-item border-b border-[#E8E3DC] py-2">
-                      <button
-                        className="faq-question w-full flex justify-between items-center py-5 text-left text-sm font-sans"
-                        onClick={() => setOpenFaq(isOpen ? null : idx)}
-                      >
-                        <span className="font-medium tracking-wide">{faq.q}</span>
-                        <span className="faq-icon text-lg font-light transition-transform duration-300">
-                          {isOpen ? '−' : '+'}
-                        </span>
-                      </button>
-                      <div
-                        className="faq-answer overflow-hidden transition-all duration-500 ease-out"
-                        style={{ maxHeight: isOpen ? '250px' : '0px' }}
-                      >
-                        <p className="faq-answer-text text-text-muted text-xs leading-relaxed pb-6 pr-6">
-                          {faq.a}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </section>
 
           {/* ======== CONTACT SECTION ======== */}
           <section id="contact" className="section contact-section border-t border-[#E8E3DC] bg-zinc-50/50">

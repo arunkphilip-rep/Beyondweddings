@@ -65,34 +65,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* FAQ (simple inline; Home already has FAQ) */}
-        <section className="mb-16 border-t border-[#E8E3DC] pt-12">
-          <div className="max-w-[900px] mx-auto">
-            <div className="section-label">FAQ</div>
-            <h2 className="section-title" style={{ marginBottom: 16 }}>
-              Common Questions
-            </h2>
 
-            <div className="text-sm text-text-muted leading-relaxed space-y-6">
-              <div>
-                <strong className="text-text">How far in advance should we book?</strong>
-                <div>We recommend 8–12 months for peak dates. If you’re closer, contact us—we’ll check availability.</div>
-              </div>
-              <div>
-                <strong className="text-text">Do you travel for weddings?</strong>
-                <div>Yes. Destination weddings are part of what we love—worldwide coverage with seamless planning.</div>
-              </div>
-              <div>
-                <strong className="text-text">How many photos will we receive?</strong>
-                <div>Typically 600–800+ images for a full day, carefully edited and delivered via an online gallery.</div>
-              </div>
-              <div>
-                <strong className="text-text">When will photos be delivered?</strong>
-                <div>Delivery timelines depend on season and coverage. We’ll share the expected schedule during inquiry.</div>
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* Availability / Contact CTA */}
         <section className="text-center border-t border-[#E8E3DC] pt-12">

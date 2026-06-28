@@ -7,28 +7,6 @@ export const metadata: Metadata = {
 };
 
 export default function ContactPage() {
-  const faqs = [
-    {
-      q: 'How far in advance should we book?',
-      a: 'We recommend booking 8–12 months in advance to secure your date for peak wedding season. If you’re closer, reach out and we’ll check availability.',
-    },
-    {
-      q: 'Do you travel across Kerala and India?',
-      a: 'Yes. We cover weddings across Kerala and beyond. Destination weddings are also welcome—tell us where your story happens.',
-    },
-    {
-      q: 'Do you offer wedding films?',
-      a: 'We offer cinematic storytelling alongside photography. During your inquiry, we’ll share package options based on your day and preferences.',
-    },
-    {
-      q: 'When will we receive our photos?',
-      a: 'Delivery timelines depend on coverage and season. We’ll share an estimated schedule once we understand your wedding details.',
-    },
-    {
-      q: 'Can we download images from the gallery?',
-      a: 'Yes. After editing, you’ll receive a private online gallery where you can view and download your curated images.',
-    },
-  ];
 
   return (
     <main className="flex-grow bg-bg min-h-screen pt-32 pb-24 px-6 select-none">
@@ -100,22 +78,6 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              {/* FAQ */}
-              <div className="mt-12 pt-12 border-t border-[#E8E3DC]">
-                <div className="section-label">FAQ</div>
-                <h2 className="section-title" style={{ fontSize: 'clamp(1.4rem, 2.3vw, 1.9rem)', marginBottom: 14 }}>
-                  Common Questions
-                </h2>
-
-                <div className="text-sm text-text-muted leading-relaxed space-y-6">
-                  {faqs.map((f) => (
-                    <div key={f.q}>
-                      <strong className="text-text">{f.q}</strong>
-                      <div className="mt-1">{f.a}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </aside>
           </div>
         </section>
