@@ -240,7 +240,7 @@ export default function GalleryList() {
                     <h2 style={{
                       fontFamily: 'var(--font-serif)',
                       fontSize: 'clamp(1.2rem, 2.5vw, 1.6rem)', fontWeight: 300,
-                      letterSpacing: '0.12em', textTransform: 'uppercase', color: '#fff',
+                      letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--color-accent)',
                       marginBottom: 10, textShadow: '0 2px 16px rgba(0,0,0,0.5)',
                     }}>
                       {gallery.gallery_name}

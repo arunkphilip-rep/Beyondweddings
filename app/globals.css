@@ -1534,7 +1534,7 @@ body.project-view-open .header { display: none !important; }
   font-weight: 300;
   letter-spacing: clamp(0.06em, 1.5vw, 0.22em);
   text-transform: uppercase;
-  color: #fff;
+  color: var(--color-accent);
   line-height: 1.06;
   margin-bottom: clamp(16px, 3vh, 28px);
   text-shadow: 0 4px 32px rgba(0,0,0,0.4);
