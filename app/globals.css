@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 @import "tailwindcss";
 
@@ -6,8 +6,8 @@
    CSS CUSTOM PROPERTIES
    ═══════════════════════════════════════════════════════ */
 :root {
-  --font-serif: 'Cormorant Garamond', serif;
-  --font-sans: 'Inter', sans-serif;
+  --font-serif: 'Playfair Display', serif;
+  --font-sans: 'Montserrat', sans-serif;
   --color-bg: #FAF8F5;
   --color-text: #1C1C1C;
   --color-text-muted: #6B6B6B;
@@ -431,7 +431,7 @@ body.menu-open .bar-2 { transform: translateY(-5px) rotate(-45deg); }
   text-align: center;
   color: #fff;
   padding: 0 clamp(20px, 6vw, 60px);
-  max-width: 960px;
+  max-width: 1400px;
   width: 100%;
 }
 
@@ -442,6 +442,7 @@ body.menu-open .bar-2 { transform: translateY(-5px) rotate(-45deg); }
   font-weight: 300;
   /* Tight letter-spacing at small sizes, wider at large — prevents wrapping */
   letter-spacing: clamp(0.06em, 1.2vw, 0.22em);
+  margin-right: calc(-1 * clamp(0.06em, 1.2vw, 0.22em)); /* offset letter spacing for perfect center */
   text-transform: uppercase;
   margin-bottom: clamp(12px, 2vw, 20px);
   opacity: 0;
