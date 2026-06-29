@@ -30,17 +30,10 @@ export default function AboutPage() {
               Crafted like an editorial album—frame by frame.
             </h2>
             <p className="text-text-muted text-sm leading-relaxed">
-              Beyond Weddings was created for couples who want more than photographs. We believe every love story has
-              a rhythm—small gestures, quiet glances, and the feeling of a moment that deserves to be remembered
-              beautifully.
+              At Beyond Weddings, we believe every love story is a masterpiece waiting to be told with elegance, grace, and cinematic artistry. Our lenses do not just take pictures; they catch the quiet whispers, the unscripted laughter, and the timeless poetry written between two souls.
             </p>
             <p className="text-text-muted text-sm leading-relaxed mt-4">
-              Our approach blends fine art composition with contemporary editorial styling. From candid emotion to
-              cinematic lighting, we craft timeless images with a refined, minimal aesthetic.
-            </p>
-            <p className="text-text-muted text-sm leading-relaxed mt-4">
-              Based in Kerala/Europe (as applicable), available worldwide for destination weddings across India and beyond.
-              Our mission is simple: create galleries that feel intimate, authentic, and unforgettable.
+              With a deep passion for the art of emotion, we trace the gentle unfolding of your promise. We capture the sweet anticipation of your Save the Date, follow the rising joy of your celebrations, and immortalize the breathtaking magic of your Wedding day. Every frame is painted with natural light, woven with soft shadows, and crafted with the deepest intention to keep your memories forever young.
             </p>
           </div>
         </section>

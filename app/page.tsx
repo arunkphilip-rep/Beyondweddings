@@ -56,7 +56,7 @@ export default function Home() {
     },
     {
       desktop: '/images/arun-rosmin/d.jpg',
-      mobile: '/images/arun-rosmin/aa.jpeg'
+      mobile: '/images/arun-rosmin/aa.jpg'
     }
   ];
 
@@ -82,10 +82,8 @@ export default function Home() {
 
 
   useEffect(() => {
-    // 1. Reveal page content wrapper on load
-    const timer1 = setTimeout(() => {
-      setIsRevealed(true);
-    }, 2250);
+    // 1. Reveal page content wrapper immediately
+    setIsRevealed(true);
 
     // 2. Hero Slideshow rotation loop (2.5s interval)
     const slideshowTimer = setInterval(() => {
@@ -98,7 +96,6 @@ export default function Home() {
     }, 5000);
 
     return () => {
-      clearTimeout(timer1);
       clearInterval(slideshowTimer);
       clearInterval(testimonialsTimer);
     };
@@ -227,16 +224,11 @@ export default function Home() {
                   <h3 className="about-heading font-serif">Capturing Love Stories Across the Globe</h3>
                   <div className="about-divider" />
                   <p className="about-text text-text-muted">
-                    At BEYOND WEDDINGS, we believe every love story deserves to be told with elegance and artistry.
-                    Our approach blends fine art composition with editorial storytelling, creating timeless images
-                    that reflect the unique beauty of each couple&apos;s journey.
+                    At Beyond Weddings, we believe every love story is a masterpiece waiting to be told with elegance, grace, and cinematic artistry. Our lenses do not just take pictures; they catch the quiet whispers, the unscripted laughter, and the timeless poetry written between two souls.
                   </p>
                   <p className="about-text text-text-muted">
-                    With a background in fashion and editorial photography, we bring a refined aesthetic to wedding
-                    photography — from intimate elopements in the Italian countryside to grand celebrations in historic
-                    estates. Every frame is crafted with intention, light, and emotion.
+                    With a deep passion for the art of emotion, we trace the gentle unfolding of your promise. We capture the sweet anticipation of your Save the Date, follow the rising joy of your celebrations, and immortalize the breathtaking magic of your Wedding day. Every frame is painted with natural light, woven with soft shadows, and crafted with the deepest intention to keep your memories forever young.
                   </p>
-                  <p className="about-text text-text-muted">Based in Europe, available worldwide. Let us tell your story.</p>
                   <a
                     href="#contact"
                     onClick={(e) => handleScrollToSection(e, 'contact')}
