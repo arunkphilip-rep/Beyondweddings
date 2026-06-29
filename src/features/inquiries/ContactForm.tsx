@@ -44,17 +44,6 @@ export default function ContactForm() {
 
       setSuccess(true);
 
-      // 2. Open WhatsApp link to allow direct messaging
-      const waUrl = inquiryService.getWhatsAppUrl({
-        bride_name: formData.bride_name,
-        groom_name: formData.groom_name,
-        wedding_date: formData.wedding_date,
-        venue: formData.venue,
-        budget: formData.budget
-      });
-
-      window.open(waUrl, '_blank');
-
       // Reset form fields
       setFormData({
         bride_name: '',
@@ -69,7 +58,7 @@ export default function ContactForm() {
 
       setTimeout(() => {
         setSuccess(false);
-      }, 5000);
+      }, 7000);
 
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Something went wrong. Please check fields.';
@@ -82,18 +71,25 @@ export default function ContactForm() {
 
   return (
     <div className="contact-form-col">
+      {success && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm transition-opacity duration-300">
+          <div className="bg-[#FAF8F5] w-full max-w-md p-10 rounded-xl shadow-2xl text-center relative" style={{ animation: 'fadeUp 0.5s ease forwards' }}>
+            <button onClick={() => setSuccess(false)} className="absolute top-4 right-5 text-xl text-text-muted hover:text-text transition-colors">
+              ✕
+            </button>
+            <h3 className="font-serif text-2xl mb-4 text-[#1C1C1C] uppercase tracking-widest">Thank You</h3>
+            <div className="w-12 h-[1px] bg-[#B08D57] mx-auto mb-6" />
+            <p className="text-[#6B6B6B] text-sm tracking-wide leading-relaxed">
+              Your inquiry has been successfully sent. We will review your details and be in touch soon.
+            </p>
+          </div>
+        </div>
+      )}
+
       <form className="contact-form" onSubmit={handleSubmit}>
         {errorMsg && (
-          <div className="text-red-500 text-xs tracking-wider uppercase mb-2">
+          <div className="text-red-500 text-xs tracking-wider uppercase mb-4">
             {errorMsg}
-          </div>
-        )}
-
-        {success && (
-          <div className="text-green-600 text-xs tracking-wider uppercase mb-2" style={{
-            animation: 'fadeUp 0.5s ease forwards'
-          }}>
-            ✓ Inquiry submitted successfully! Opening WhatsApp...
           </div>
         )}
 
